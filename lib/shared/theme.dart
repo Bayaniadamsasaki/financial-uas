@@ -10,6 +10,7 @@ Color darkBackgroundColor = const Color(0xff020518);
 Color blueColor = const Color(0xff53C1F9);
 Color blueLightColor = const Color(0xffEBF4FB);
 Color purpleColor = const Color(0xff5142E6);
+Color birulangit = const Color(0xff0085FF);
 Color purpleLightColor = const Color(0xff5D66EF);
 Color purpleLight2Color = const Color(0xffCAB6F3);
 Color purpleLight3Color = const Color(0xff3E00A3);

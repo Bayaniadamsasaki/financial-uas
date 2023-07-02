@@ -41,7 +41,7 @@ class _MenuPageState extends State<MenuPage> {
         onPressed: () {
           Navigator.pushNamed(context, '/add');
         },
-        backgroundColor: purpleColor,
+        backgroundColor: birulangit,
         child: const Icon(Icons.add),
       ),
     );
@@ -118,7 +118,7 @@ class _MenuPageState extends State<MenuPage> {
         borderRadius: BorderRadius.circular(28),
         image: const DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage('assets/img_bg_card.png'),
+          image: AssetImage('assets/card.png'),
         ),
       ),
       child: SingleChildScrollView(
