@@ -46,12 +46,14 @@ class CustomTextButton extends StatelessWidget {
     required this.title,
     this.width = double.infinity,
     this.height = 24,
+    this.textColor,
     this.onPressed,
   });
 
   final String title;
   final double width;
   final double height;
+  final Color? textColor;
   final VoidCallback? onPressed;
 
   @override
@@ -66,7 +68,10 @@ class CustomTextButton extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: whiteTextStyle.copyWith(fontSize: 16, color: greyColor),
+          style: whiteTextStyle.copyWith(
+            fontSize: 16,
+            color: textColor ?? greyColor,
+          ),
         ),
       ),
     );

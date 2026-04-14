@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:finalcial_records/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -221,8 +222,8 @@ class _SplashPageState extends State<SplashPage>
                                         ),
                                       ],
                                     ),
-                                    child: const Image(
-                                      image: AssetImage('assets/money.png'),
+                                    child: SvgPicture.asset(
+                                      'assets/dollar_sky.svg',
                                     ),
                                   ),
                                 ),

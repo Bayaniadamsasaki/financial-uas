@@ -337,10 +337,11 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
           minimumSize: const Size.fromHeight(48),
           backgroundColor: birulangit,
           elevation: 0,
+          shadowColor: birulangit.withValues(alpha: 0.26),
           foregroundColor: whiteColor,
           textStyle: whiteTextStyle.copyWith(fontWeight: semiBold),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
       );
@@ -352,13 +353,14 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
       label: Text(title),
       style: OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
+        backgroundColor: whiteColor.withValues(alpha: 0.82),
         side: BorderSide(
-          color: blueColor.withValues(alpha: 0.45),
+          color: blueColor.withValues(alpha: 0.4),
         ),
         foregroundColor: greyBlackColor,
         textStyle: blackTextStyle.copyWith(fontWeight: semiBold),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
       ),
     );
@@ -368,83 +370,216 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
     return Stack(
       children: [
         const _InputFormBackground(),
-        Center(
+        Positioned(
+          top: -20,
+          right: -30,
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 24),
-            padding: const EdgeInsets.fromLTRB(22, 24, 22, 20),
+            width: 150,
+            height: 150,
             decoration: BoxDecoration(
-              color: whiteColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: blackColor.withValues(alpha: 0.08),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  greenColor.withValues(alpha: 0.18),
+                  greenColor.withValues(alpha: 0.02),
+                ],
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: greenColor.withValues(alpha: 0.14),
-                  ),
-                  child: Icon(
-                    Icons.check_circle_rounded,
-                    color: greenColor,
-                    size: 42,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  'Berhasil Disimpan',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 22,
-                    fontWeight: extraBold,
+          ),
+        ),
+        Center(
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 420),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: value,
+                child: Transform.translate(
+                  offset: Offset(0, 24 * (1 - value)),
+                  child: Transform.scale(
+                    scale: 0.94 + (0.06 * value),
+                    child: child,
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  successMessage,
-                  style: greyBlackTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: medium,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildSuccessActionButton(
-                        title: 'Tambah Lagi',
-                        icon: Icons.add_rounded,
-                        filled: false,
-                        onPressed: _resetForm,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _buildSuccessActionButton(
-                        title: 'Ke Beranda',
-                        icon: Icons.home_rounded,
-                        filled: true,
-                        onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            '/menu',
-                            (route) => false,
-                          );
-                        },
-                      ),
-                    ),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(22, 24, 22, 20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    whiteColor,
+                    const Color(0xffF8FDFF),
                   ],
                 ),
-              ],
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(
+                  color: blueColor.withValues(alpha: 0.2),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: blackColor.withValues(alpha: 0.08),
+                    blurRadius: 22,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(99),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xff038EEA),
+                          Color(0xff20B3FF),
+                        ],
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.task_alt_rounded,
+                          size: 14,
+                          color: whiteColor,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Transaksi Tercatat',
+                          style: whiteTextStyle.copyWith(
+                            fontSize: 11,
+                            fontWeight: semiBold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: 92,
+                    height: 92,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          greenColor.withValues(alpha: 0.95),
+                          const Color(0xff16C08B),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: greenColor.withValues(alpha: 0.28),
+                          blurRadius: 18,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 62,
+                        height: 62,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: whiteColor.withValues(alpha: 0.14),
+                        ),
+                        child: Icon(
+                          Icons.check_rounded,
+                          color: whiteColor,
+                          size: 40,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Berhasil Disimpan',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 24,
+                      fontWeight: extraBold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    successMessage,
+                    style: greyBlackTextStyle.copyWith(
+                      fontSize: 14,
+                      fontWeight: medium,
+                      height: 1.45,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      color: blueLightColor.withValues(alpha: 0.55),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.lock_clock_rounded,
+                          size: 18,
+                          color: birulangit,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Data langsung masuk ke histori dan ringkasan saldo.',
+                            style: greyBlackTextStyle.copyWith(
+                              fontSize: 12,
+                              fontWeight: medium,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildSuccessActionButton(
+                          title: 'Tambah Lagi',
+                          icon: Icons.add_rounded,
+                          filled: false,
+                          onPressed: _resetForm,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _buildSuccessActionButton(
+                          title: 'Ke Beranda',
+                          icon: Icons.home_rounded,
+                          filled: true,
+                          onPressed: () {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/menu',
+                              (route) => false,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

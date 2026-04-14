@@ -239,6 +239,7 @@ class _SignInPageState extends State<SignInPage>
                             CustomTextButton(
                               width: 118,
                               title: 'Buat akun baru',
+                              textColor: birulangit,
                               onPressed: () {
                                 Navigator.pushNamed(context, '/sign-up');
                               },

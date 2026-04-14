@@ -216,10 +216,11 @@ class _SignUpPageState extends State<SignUpPage>
                                 fontWeight: medium,
                               ),
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 2),
                             CustomTextButton(
                               width: 82,
-                              title: 'Sign In',
+                              title: 'Masuk',
+                              textColor: birulangit,
                               onPressed: () {
                                 Navigator.pushNamed(context, '/sign-in');
                               },
