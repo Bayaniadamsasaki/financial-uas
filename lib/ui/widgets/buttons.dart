@@ -23,7 +23,7 @@ class CustomFillButton extends StatelessWidget {
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          backgroundColor: purpleColor,
+          backgroundColor: birulangit,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(56),
           ),

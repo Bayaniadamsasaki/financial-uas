@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:finalcial_records/shared/theme.dart';
+import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -10,35 +10,193 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashPageState extends State<SplashPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
+    _controller.forward();
+
     Timer(
-      const Duration(seconds: 2),
+      const Duration(milliseconds: 2300),
       () {
+        if (!mounted) {
+          return;
+        }
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/sign-in',
-          (route) => true,
+          (route) => false,
         );
       },
     );
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
-      body: Center(
-        child: Column(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xffE7F6FF),
+              lightBackgroundColor,
+              whiteColor,
+            ],
+          ),
+        ),
+        child: Stack(
           children: [
-            Container(
-              width: 164,
-              height: 164,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/money.png'),
+            Positioned(
+              top: -80,
+              right: -70,
+              child: Container(
+                width: 240,
+                height: 240,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      birulangit.withOpacity(0.22),
+                      birulangit.withOpacity(0.03),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -90,
+              left: -60,
+              child: Container(
+                width: 220,
+                height: 220,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      greenColor.withOpacity(0.17),
+                      greenColor.withOpacity(0.02),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 28),
+                    padding: const EdgeInsets.fromLTRB(22, 26, 22, 20),
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.08),
+                          blurRadius: 22,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 96,
+                          height: 96,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                birulangit.withOpacity(0.18),
+                                birulangit.withOpacity(0.08),
+                              ],
+                            ),
+                          ),
+                          child: const Image(
+                            image: AssetImage('assets/money.png'),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Financial Records',
+                          style: blackTextStyle.copyWith(
+                            fontSize: 24,
+                            fontWeight: extraBold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Catat keuangan harianmu dengan cepat, rapi, dan nyaman.',
+                          textAlign: TextAlign.center,
+                          style: greyBlackTextStyle.copyWith(
+                            fontSize: 13,
+                            height: 1.45,
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        SizedBox(
+                          width: 180,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(99),
+                            child: LinearProgressIndicator(
+                              minHeight: 7,
+                              backgroundColor: blueLightColor,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                birulangit,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Menyiapkan aplikasi...',
+                          style: greyTextStyle.copyWith(
+                            fontSize: 12,
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

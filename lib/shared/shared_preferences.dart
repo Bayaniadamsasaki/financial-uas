@@ -1,82 +1,82 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefUtils {
-  static saveNama(String nama) async {
+  static Future<void> saveNama(String nama) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('nama', nama);
+    await pref.setString('nama', nama);
   }
 
-  static readNama() async {
+  static Future<String> readNama() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString('nama');
+    return pref.getString('nama') ?? '';
   }
 
-  static saveEmail(String email) async {
+  static Future<void> saveEmail(String email) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('email', email);
+    await pref.setString('email', email);
   }
 
-  static readEmail() async {
+  static Future<String> readEmail() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getString('email') ?? '';
   }
 
-  static savePassword(String pass) async {
+  static Future<void> savePassword(String pass) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('password', pass);
+    await pref.setString('password', pass);
   }
 
-  static readPassword() async {
+  static Future<String> readPassword() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getString('password') ?? '';
   }
 
-  static saveTanggalGabung(String tanggalGabung) async {
+  static Future<void> saveTanggalGabung(String tanggalGabung) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('tanggalGabung', tanggalGabung);
+    await pref.setString('tanggalGabung', tanggalGabung);
   }
 
-  static readTanggalGabung() async {
+  static Future<String> readTanggalGabung() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString('tanggalGabung');
+    return pref.getString('tanggalGabung') ?? '';
   }
 
-  static saveNameImage(String nameImage) async {
+  static Future<void> saveNameImage(String nameImage) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('nameImage', nameImage);
+    await pref.setString('nameImage', nameImage);
   }
 
-  static readNameImage() async {
+  static Future<String> readNameImage() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString('nameImage');
+    return pref.getString('nameImage') ?? '';
   }
 
-  static saveSaldo(int saldo) async {
+  static Future<void> saveSaldo(int saldo) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setInt('saldo', saldo);
+    await pref.setInt('saldo', saldo);
   }
 
-  static readSaldo() async {
+  static Future<int> readSaldo() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getInt('saldo') ?? 0;
   }
 
-  static savePemasukan(int pemasukan) async {
+  static Future<void> savePemasukan(int pemasukan) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setInt('pemasukan', pemasukan);
+    await pref.setInt('pemasukan', pemasukan);
   }
 
-  static readPemasukan() async {
+  static Future<int> readPemasukan() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getInt('pemasukan') ?? 0;
   }
 
-  static savePengeluaran(int pengeluaran) async {
+  static Future<void> savePengeluaran(int pengeluaran) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setInt('pengeluaran', pengeluaran);
+    await pref.setInt('pengeluaran', pengeluaran);
   }
 
-  static readPengeluaran() async {
+  static Future<int> readPengeluaran() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getInt('pengeluaran') ?? 0;
   }

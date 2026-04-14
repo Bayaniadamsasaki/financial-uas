@@ -10,16 +10,16 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  intl: ^0.18.1
-  google_fonts: ^5.1.0
+  intl: ^0.20.2
+  google_fonts: ^8.0.2
   shared_preferences: ^2.1.2
-  uuid: ^3.0.6
+  uuid: ^4.5.3
   flutter_spinkit: ^5.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

@@ -23,48 +23,78 @@ class ProfileMenuItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(
-          bottom: 30,
+          bottom: 12,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: blueLightColor.withOpacity(0.45),
+          border: Border.all(
+            color: blueColor.withOpacity(0.22),
+          ),
         ),
         child: Row(
           children: [
-            Image.asset(
-              iconUrl,
-              width: 24,
-            ),
-            const SizedBox(
-              width: 18,
-            ),
-            Text(
-              title,
-              style: blackTextStyle.copyWith(
-                fontWeight: medium,
+            Container(
+              width: 38,
+              height: 38,
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: whiteColor,
+              ),
+              child: Image.asset(
+                iconUrl,
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: blackTextStyle.copyWith(
+                  fontWeight: medium,
+                ),
+              ),
+            ),
             tag == 1
                 ? Container(
-                    width: 90,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: purpleLight2Color,
-                      borderRadius: BorderRadius.circular(20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
                     ),
-                    child: Center(
-                      child: Text(
-                        subTitle,
-                        style: blackTextStyle.copyWith(
-                          color: purpleColor,
-                          fontWeight: semiBold,
-                        ),
+                    decoration: BoxDecoration(
+                      color: blueLightColor,
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    child: Text(
+                      subTitle,
+                      style: blackTextStyle.copyWith(
+                        color: birulangit,
+                        fontWeight: semiBold,
+                        fontSize: 12,
                       ),
                     ),
                   )
-                : Text(
-                    subTitle,
-                    style: blackTextStyle.copyWith(
-                      fontWeight: medium,
-                    ),
-                  ),
+                : subTitle.isEmpty
+                    ? const SizedBox()
+                    : Text(
+                        subTitle,
+                        style: blackTextStyle.copyWith(
+                          color: greyBlackColor,
+                          fontWeight: medium,
+                          fontSize: 13,
+                        ),
+                      ),
+            if (onTap != null) ...[
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: greyColor,
+              ),
+            ],
           ],
         ),
       ),
