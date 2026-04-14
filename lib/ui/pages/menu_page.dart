@@ -7,6 +7,12 @@ import 'package:finalcial_records/ui/widgets/history_transaction_item.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum _HistoryFilter {
+  all,
+  income,
+  expense,
+}
+
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
@@ -15,6 +21,8 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  _HistoryFilter _selectedHistoryFilter = _HistoryFilter.all;
+
   Future<List<Catatan>> readCatatan() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String catatanString = prefs.getString('catatan_key') ?? '';
@@ -156,6 +164,67 @@ class _MenuPageState extends State<MenuPage> {
     return 'Selamat malam';
   }
 
+  bool _isIncomeTransaction(Catatan item) {
+    final String type = (item.tipeTransaksi ?? '').toLowerCase();
+    return type.contains('pemasukan');
+  }
+
+  List<Catatan> _applyHistoryFilter(List<Catatan> items) {
+    switch (_selectedHistoryFilter) {
+      case _HistoryFilter.all:
+        return items;
+      case _HistoryFilter.income:
+        return items.where(_isIncomeTransaction).toList();
+      case _HistoryFilter.expense:
+        return items.where((item) => !_isIncomeTransaction(item)).toList();
+    }
+  }
+
+  String _activeFilterLabel() {
+    switch (_selectedHistoryFilter) {
+      case _HistoryFilter.all:
+        return 'Semua';
+      case _HistoryFilter.income:
+        return 'Pemasukan';
+      case _HistoryFilter.expense:
+        return 'Pengeluaran';
+    }
+  }
+
+  Widget _buildHistoryFilterChip({
+    required _HistoryFilter filter,
+    required String label,
+  }) {
+    final bool isSelected = _selectedHistoryFilter == filter;
+
+    return ChoiceChip(
+      label: Text(
+        label,
+        style: (isSelected ? whiteTextStyle : blueTextStyle).copyWith(
+          fontSize: 12,
+          fontWeight: semiBold,
+        ),
+      ),
+      selected: isSelected,
+      showCheckmark: false,
+      selectedColor: birulangit,
+      backgroundColor: blueLightColor,
+      side: BorderSide(
+        color: isSelected ? birulangit : blueColor.withOpacity(0.2),
+      ),
+      shape: const StadiumBorder(),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 6,
+        vertical: 2,
+      ),
+      onSelected: (_) {
+        setState(() {
+          _selectedHistoryFilter = filter;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,168 +291,87 @@ class _MenuPageState extends State<MenuPage> {
       margin: const EdgeInsets.only(
         top: 6,
       ),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 18,
+        vertical: 16,
+      ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xff038EEA),
-            Color(0xff27B2FF),
-          ],
-        ),
+        borderRadius: BorderRadius.circular(20),
+        color: whiteColor,
         boxShadow: [
           BoxShadow(
-            color: birulangit.withOpacity(0.3),
-            blurRadius: 24,
-            offset: const Offset(0, 14),
+            color: blackColor.withOpacity(0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(99),
-                  color: whiteColor.withOpacity(0.2),
-                ),
-                child: Text(
-                  'Dashboard Keuangan',
-                  style: whiteTextStyle.copyWith(
-                    fontSize: 12,
-                    fontWeight: semiBold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _greetingMessage(),
+                  style: greyTextStyle.copyWith(
+                    fontSize: 13,
+                    fontWeight: medium,
                   ),
                 ),
-              ),
-              const Spacer(),
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: whiteColor.withOpacity(0.2),
-                ),
-                child: Icon(
-                  Icons.notifications_active_outlined,
-                  color: whiteColor,
-                  size: 20,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _greetingMessage(),
-                      style: whiteTextStyle.copyWith(
-                        fontSize: 13,
-                        fontWeight: medium,
-                        color: whiteColor.withOpacity(0.9),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    FutureBuilder(
-                      future: SharedPrefUtils.readNama(),
-                      builder: (context, snapshot) {
-                        final String displayName =
-                            (snapshot.data ?? '').toString().trim();
-                        return Text(
-                          displayName.isEmpty ? 'Pengguna' : displayName,
-                          style: whiteTextStyle.copyWith(
-                            fontSize: 24,
-                            fontWeight: extraBold,
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Pantau pemasukan dan pengeluaranmu hari ini.',
-                      style: whiteTextStyle.copyWith(
-                        fontSize: 13,
-                        color: whiteColor.withOpacity(0.88),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 14),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/profile');
-                },
-                child: FutureBuilder(
-                  future: SharedPrefUtils.readNameImage(),
+                const SizedBox(height: 2),
+                FutureBuilder(
+                  future: SharedPrefUtils.readNama(),
                   builder: (context, snapshot) {
-                    final String avatarName =
+                    final String displayName =
                         (snapshot.data ?? '').toString().trim();
-                    return Container(
-                      width: 72,
-                      height: 72,
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: whiteColor,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: avatarName.isEmpty
-                                ? const AssetImage('assets/image-1.png')
-                                : AssetImage('assets/$avatarName.png'),
-                          ),
-                        ),
+                    return Text(
+                      displayName.isEmpty ? 'Pengguna' : displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: blackTextStyle.copyWith(
+                        fontSize: 22,
+                        fontWeight: extraBold,
                       ),
                     );
                   },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              color: whiteColor.withOpacity(0.2),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.analytics_outlined,
-                  size: 18,
-                  color: whiteColor,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Semakin konsisten mencatat, semakin mudah atur keuangan.',
-                    style: whiteTextStyle.copyWith(
-                      fontSize: 12,
-                      fontWeight: medium,
-                      color: whiteColor.withOpacity(0.95),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+            child: FutureBuilder(
+              future: SharedPrefUtils.readNameImage(),
+              builder: (context, snapshot) {
+                final String avatarName =
+                    (snapshot.data ?? '').toString().trim();
+                return Container(
+                  width: 58,
+                  height: 58,
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: birulangit.withOpacity(0.25),
                     ),
                   ),
-                ),
-              ],
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: avatarName.isEmpty
+                            ? const AssetImage('assets/image-1.png')
+                            : AssetImage('assets/$avatarName.png'),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -567,7 +555,7 @@ class _MenuPageState extends State<MenuPage> {
                   borderRadius: BorderRadius.circular(99),
                 ),
                 child: Text(
-                  'Terbaru',
+                  'Filter: ${_activeFilterLabel()}',
                   style: blueTextStyle.copyWith(
                     fontSize: 12,
                     fontWeight: semiBold,
@@ -575,6 +563,28 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildHistoryFilterChip(
+                  filter: _HistoryFilter.all,
+                  label: 'Semua',
+                ),
+                const SizedBox(width: 8),
+                _buildHistoryFilterChip(
+                  filter: _HistoryFilter.income,
+                  label: 'Pemasukan',
+                ),
+                const SizedBox(width: 8),
+                _buildHistoryFilterChip(
+                  filter: _HistoryFilter.expense,
+                  label: 'Pengeluaran',
+                ),
+              ],
+            ),
           ),
           Container(
             padding: const EdgeInsets.all(16),
@@ -637,17 +647,49 @@ class _MenuPageState extends State<MenuPage> {
                   );
                 }
 
+                final List<Catatan> filteredItems = _applyHistoryFilter(items);
+                if (filteredItems.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 18,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      color: blueLightColor.withOpacity(0.5),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.filter_alt_off_outlined,
+                          color: birulangit,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Tidak ada transaksi untuk filter ${_activeFilterLabel().toLowerCase()}.',
+                            style: greyBlackTextStyle.copyWith(
+                              fontSize: 13,
+                              fontWeight: medium,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
                 return ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: items.length,
+                  itemCount: filteredItems.length,
                   separatorBuilder: (context, index) => const SizedBox(
                     height: 10,
                   ),
                   itemBuilder: (context, index) {
-                    final Catatan item = items[index];
-                    final bool isPemasukan =
-                        item.tipeTransaksi.toString() == 'pemasukan';
+                    final Catatan item = filteredItems[index];
+                    final bool isPemasukan = _isIncomeTransaction(item);
 
                     return HistoryTransactionItem(
                       iconUrl: isPemasukan

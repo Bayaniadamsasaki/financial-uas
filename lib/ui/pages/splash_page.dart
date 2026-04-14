@@ -14,6 +14,7 @@ class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fadeAnimation;
+  late final Animation<double> _logoScaleAnimation;
   late final Animation<Offset> _slideAnimation;
 
   @override
@@ -28,6 +29,16 @@ class _SplashPageState extends State<SplashPage>
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
+    );
+
+    _logoScaleAnimation = Tween<double>(
+      begin: 0.84,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutBack,
+      ),
     );
 
     _slideAnimation = Tween<Offset>(
@@ -121,10 +132,20 @@ class _SplashPageState extends State<SplashPage>
                   position: _slideAnimation,
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 28),
-                    padding: const EdgeInsets.fromLTRB(22, 26, 22, 20),
+                    padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
                     decoration: BoxDecoration(
-                      color: whiteColor,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          whiteColor,
+                          const Color(0xffF7FCFF),
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: blueColor.withOpacity(0.15),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: blackColor.withOpacity(0.08),
@@ -137,25 +158,50 @@ class _SplashPageState extends State<SplashPage>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 96,
-                          height: 96,
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                birulangit.withOpacity(0.18),
-                                birulangit.withOpacity(0.08),
-                              ],
+                            borderRadius: BorderRadius.circular(99),
+                            color: blueLightColor,
+                          ),
+                          child: Text(
+                            'PERSONAL FINANCE TRACKER',
+                            style: blueTextStyle.copyWith(
+                              fontSize: 10,
+                              letterSpacing: 0.5,
+                              fontWeight: semiBold,
                             ),
                           ),
-                          child: const Image(
-                            image: AssetImage('assets/money.png'),
+                        ),
+                        const SizedBox(height: 14),
+                        ScaleTransition(
+                          scale: _logoScaleAnimation,
+                          child: Container(
+                            width: 98,
+                            height: 98,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  birulangit.withOpacity(0.2),
+                                  birulangit.withOpacity(0.08),
+                                ],
+                              ),
+                              border: Border.all(
+                                color: birulangit.withOpacity(0.2),
+                              ),
+                            ),
+                            child: const Image(
+                              image: AssetImage('assets/money.png'),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 15),
                         Text(
                           'Financial Records',
                           style: blackTextStyle.copyWith(
@@ -165,7 +211,7 @@ class _SplashPageState extends State<SplashPage>
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Catat keuangan harianmu dengan cepat, rapi, dan nyaman.',
+                          'Merapikan pemasukan dan pengeluaranmu setiap hari.',
                           textAlign: TextAlign.center,
                           style: greyBlackTextStyle.copyWith(
                             fontSize: 13,
@@ -188,7 +234,7 @@ class _SplashPageState extends State<SplashPage>
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Menyiapkan aplikasi...',
+                          'Menyiapkan dashboard kamu...',
                           style: greyTextStyle.copyWith(
                             fontSize: 12,
                             fontWeight: medium,

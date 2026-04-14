@@ -68,7 +68,20 @@ class _SignInPageState extends State<SignInPage>
     final String pass = _passwordController.text.trim();
 
     if (email.isEmpty || pass.isEmpty) {
-      CustomSnackBar.showToast(context, 'Email dan password wajib diisi!');
+      CustomSnackBar.showToast(
+        context,
+        'Email dan kata sandi wajib diisi.',
+        type: ToastType.warning,
+      );
+      return;
+    }
+
+    if (!email.contains('@')) {
+      CustomSnackBar.showToast(
+        context,
+        'Format email belum valid.',
+        type: ToastType.warning,
+      );
       return;
     }
 
@@ -83,15 +96,30 @@ class _SignInPageState extends State<SignInPage>
       CustomSnackBar.showToast(
         context,
         'Akun belum terdaftar. Silakan daftar dulu.',
+        type: ToastType.warning,
       );
       return;
     }
 
-    if (email == pEmail && pass == pPassword) {
-      Navigator.pushNamedAndRemoveUntil(context, '/menu', (route) => false);
-    } else {
-      CustomSnackBar.showToast(context, 'Login Gagal!');
+    if (email != pEmail) {
+      CustomSnackBar.showToast(
+        context,
+        'Email tidak terdaftar. Cek lagi atau buat akun baru.',
+        type: ToastType.error,
+      );
+      return;
     }
+
+    if (pass != pPassword) {
+      CustomSnackBar.showToast(
+        context,
+        'Kata sandi salah. Silakan coba lagi.',
+        type: ToastType.error,
+      );
+      return;
+    }
+
+    Navigator.pushNamedAndRemoveUntil(context, '/menu', (route) => false);
   }
 
   @override
