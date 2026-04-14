@@ -1,4 +1,4 @@
-import 'package:finalcial_records/models/catatan.dart';
+﻿import 'package:finalcial_records/models/catatan.dart';
 import 'package:finalcial_records/shared/shared_methods.dart';
 import 'package:finalcial_records/shared/shared_preferences.dart';
 import 'package:finalcial_records/shared/snackbar.dart';
@@ -210,7 +210,7 @@ class _MenuPageState extends State<MenuPage> {
       selectedColor: birulangit,
       backgroundColor: blueLightColor,
       side: BorderSide(
-        color: isSelected ? birulangit : blueColor.withOpacity(0.2),
+        color: isSelected ? birulangit : blueColor.withValues(alpha: 0.2),
       ),
       shape: const StadiumBorder(),
       padding: const EdgeInsets.symmetric(
@@ -249,7 +249,7 @@ class _MenuPageState extends State<MenuPage> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: birulangit.withOpacity(0.36),
+              color: birulangit.withValues(alpha: 0.36),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -263,7 +263,7 @@ class _MenuPageState extends State<MenuPage> {
             width: 26,
             height: 26,
             decoration: BoxDecoration(
-              color: whiteColor.withOpacity(0.22),
+              color: whiteColor.withValues(alpha: 0.22),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -300,7 +300,7 @@ class _MenuPageState extends State<MenuPage> {
         color: whiteColor,
         boxShadow: [
           BoxShadow(
-            color: blackColor.withOpacity(0.06),
+            color: blackColor.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, 10),
           ),
@@ -356,7 +356,7 @@ class _MenuPageState extends State<MenuPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: birulangit.withOpacity(0.25),
+                      color: birulangit.withValues(alpha: 0.25),
                     ),
                   ),
                   child: Container(
@@ -389,7 +389,7 @@ class _MenuPageState extends State<MenuPage> {
         color: whiteColor,
         boxShadow: [
           BoxShadow(
-            color: blackColor.withOpacity(0.05),
+            color: blackColor.withValues(alpha: 0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -487,7 +487,7 @@ class _MenuPageState extends State<MenuPage> {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: blueLightColor.withOpacity(0.45),
+        color: blueLightColor.withValues(alpha: 0.45),
       ),
       child: FutureBuilder<int>(
         future: futureAmount,
@@ -594,7 +594,7 @@ class _MenuPageState extends State<MenuPage> {
               color: whiteColor,
               boxShadow: [
                 BoxShadow(
-                  color: blackColor.withOpacity(0.04),
+                  color: blackColor.withValues(alpha: 0.04),
                   blurRadius: 18,
                   offset: const Offset(0, 8),
                 ),
@@ -623,7 +623,7 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(14),
-                      color: blueLightColor.withOpacity(0.5),
+                      color: blueLightColor.withValues(alpha: 0.5),
                     ),
                     child: Row(
                       children: [
@@ -656,7 +656,7 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(14),
-                      color: blueLightColor.withOpacity(0.5),
+                      color: blueLightColor.withValues(alpha: 0.5),
                     ),
                     child: Row(
                       children: [
@@ -745,8 +745,8 @@ class _HomeBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    birulangit.withOpacity(0.18),
-                    birulangit.withOpacity(0.02),
+                    birulangit.withValues(alpha: 0.18),
+                    birulangit.withValues(alpha: 0.02),
                   ],
                 ),
               ),
@@ -762,8 +762,8 @@ class _HomeBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    blueColor.withOpacity(0.12),
-                    blueColor.withOpacity(0.01),
+                    blueColor.withValues(alpha: 0.12),
+                    blueColor.withValues(alpha: 0.01),
                   ],
                 ),
               ),
@@ -774,3 +774,4 @@ class _HomeBackground extends StatelessWidget {
     );
   }
 }
+

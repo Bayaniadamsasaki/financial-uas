@@ -1,4 +1,4 @@
-import 'package:finalcial_records/shared/theme.dart';
+﻿import 'package:finalcial_records/shared/theme.dart';
 import 'package:flutter/material.dart';
 
 class ProfileMenuItem extends StatelessWidget {
@@ -31,9 +31,9 @@ class ProfileMenuItem extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: blueLightColor.withOpacity(0.45),
+          color: blueLightColor.withValues(alpha: 0.45),
           border: Border.all(
-            color: blueColor.withOpacity(0.22),
+            color: blueColor.withValues(alpha: 0.22),
           ),
         ),
         child: Row(
@@ -101,3 +101,4 @@ class ProfileMenuItem extends StatelessWidget {
     );
   }
 }
+

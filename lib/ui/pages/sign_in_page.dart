@@ -1,4 +1,4 @@
-import 'package:finalcial_records/shared/shared_preferences.dart';
+﻿import 'package:finalcial_records/shared/shared_preferences.dart';
 import 'package:finalcial_records/shared/snackbar.dart';
 import 'package:finalcial_records/shared/theme.dart';
 import 'package:finalcial_records/ui/widgets/buttons.dart';
@@ -171,7 +171,7 @@ class _SignInPageState extends State<SignInPage>
                             color: whiteColor,
                             boxShadow: [
                               BoxShadow(
-                                color: blackColor.withOpacity(0.06),
+                                color: blackColor.withValues(alpha: 0.06),
                                 blurRadius: 24,
                                 offset: const Offset(0, 12),
                               ),
@@ -287,7 +287,7 @@ class _AuthHeaderCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: birulangit.withOpacity(0.35),
+            color: birulangit.withValues(alpha: 0.35),
             blurRadius: 24,
             offset: const Offset(0, 14),
           ),
@@ -304,7 +304,7 @@ class _AuthHeaderCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: whiteColor.withOpacity(0.2),
+                  color: whiteColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(99),
                 ),
                 child: Text(
@@ -320,7 +320,7 @@ class _AuthHeaderCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: whiteColor.withOpacity(0.22),
+                  color: whiteColor.withValues(alpha: 0.22),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -347,7 +347,7 @@ class _AuthHeaderCard extends StatelessWidget {
               fontSize: 13,
               height: 1.45,
               fontWeight: medium,
-              color: whiteColor.withOpacity(0.95),
+              color: whiteColor.withValues(alpha: 0.95),
             ),
           ),
         ],
@@ -385,8 +385,8 @@ class _AuthBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    birulangit.withOpacity(0.18),
-                    birulangit.withOpacity(0.02),
+                    birulangit.withValues(alpha: 0.18),
+                    birulangit.withValues(alpha: 0.02),
                   ],
                 ),
               ),
@@ -402,8 +402,8 @@ class _AuthBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    blueColor.withOpacity(0.14),
-                    blueColor.withOpacity(0.02),
+                    blueColor.withValues(alpha: 0.14),
+                    blueColor.withValues(alpha: 0.02),
                   ],
                 ),
               ),
@@ -419,8 +419,8 @@ class _AuthBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    greenColor.withOpacity(0.13),
-                    greenColor.withOpacity(0.01),
+                    greenColor.withValues(alpha: 0.13),
+                    greenColor.withValues(alpha: 0.01),
                   ],
                 ),
               ),
@@ -431,3 +431,4 @@ class _AuthBackground extends StatelessWidget {
     );
   }
 }
+

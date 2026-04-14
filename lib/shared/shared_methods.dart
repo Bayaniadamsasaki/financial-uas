@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String formatCurrency(
-  var number, {
+  num? number, {
   String symbol = 'Rp ',
 }) {
   if (number != null) {

@@ -1,4 +1,4 @@
-import 'package:finalcial_records/models/catatan.dart';
+﻿import 'package:finalcial_records/models/catatan.dart';
 import 'package:finalcial_records/shared/shared_preferences.dart';
 import 'package:finalcial_records/shared/snackbar.dart';
 import 'package:finalcial_records/shared/theme.dart';
@@ -220,7 +220,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
             borderRadius: BorderRadius.circular(14),
             color: isSelected ? blueLightColor : whiteColor,
             border: Border.all(
-              color: isSelected ? birulangit : blueColor.withOpacity(0.25),
+              color: isSelected ? birulangit : blueColor.withValues(alpha: 0.25),
               width: isSelected ? 1.6 : 1,
             ),
           ),
@@ -267,7 +267,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: blackColor.withOpacity(0.08),
+                  color: blackColor.withValues(alpha: 0.08),
                   blurRadius: 18,
                   offset: const Offset(0, 10),
                 ),
@@ -281,7 +281,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
                   height: 72,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: birulangit.withOpacity(0.1),
+                    color: birulangit.withValues(alpha: 0.1),
                   ),
                   child: SpinKitPumpingHeart(
                     size: 36,
@@ -353,7 +353,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
       style: OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
         side: BorderSide(
-          color: blueColor.withOpacity(0.45),
+          color: blueColor.withValues(alpha: 0.45),
         ),
         foregroundColor: greyBlackColor,
         textStyle: blackTextStyle.copyWith(fontWeight: semiBold),
@@ -377,7 +377,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: blackColor.withOpacity(0.08),
+                  color: blackColor.withValues(alpha: 0.08),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -391,7 +391,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
                   height: 72,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: greenColor.withOpacity(0.14),
+                    color: greenColor.withValues(alpha: 0.14),
                   ),
                   child: Icon(
                     Icons.check_circle_rounded,
@@ -464,7 +464,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
         height: 36,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: whiteColor.withOpacity(0.2),
+          color: whiteColor.withValues(alpha: 0.2),
         ),
         child: Icon(
           icon,
@@ -487,7 +487,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
           color: birulangit,
           boxShadow: [
             BoxShadow(
-              color: birulangit.withOpacity(0.28),
+              color: birulangit.withValues(alpha: 0.28),
               blurRadius: 18,
               offset: const Offset(0, 10),
             ),
@@ -500,7 +500,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: whiteColor.withOpacity(0.2),
+                color: whiteColor.withValues(alpha: 0.2),
               ),
               child: Icon(
                 Icons.note_add_outlined,
@@ -523,7 +523,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
                     'Lengkapi detail transaksi harian kamu',
                     style: whiteTextStyle.copyWith(
                       fontSize: 12,
-                      color: whiteColor.withOpacity(0.9),
+                      color: whiteColor.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -554,7 +554,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: blackColor.withOpacity(0.06),
+                  color: blackColor.withValues(alpha: 0.06),
                   blurRadius: 16,
                   offset: const Offset(0, -2),
                 ),
@@ -607,22 +607,22 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
                   InputDecorator(
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: blueLightColor.withOpacity(0.35),
+                      fillColor: blueLightColor.withValues(alpha: 0.35),
                       prefixIcon: Icon(
                         Icons.category_outlined,
-                        color: greyBlackColor.withOpacity(0.75),
+                        color: greyBlackColor.withValues(alpha: 0.75),
                         size: 20,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
-                          color: blueColor.withOpacity(0.2),
+                          color: blueColor.withValues(alpha: 0.2),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
-                          color: blueColor.withOpacity(0.2),
+                          color: blueColor.withValues(alpha: 0.2),
                         ),
                       ),
                     ),
@@ -754,8 +754,8 @@ class _InputFormBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    birulangit.withOpacity(0.16),
-                    birulangit.withOpacity(0.02),
+                    birulangit.withValues(alpha: 0.16),
+                    birulangit.withValues(alpha: 0.02),
                   ],
                 ),
               ),
@@ -766,3 +766,4 @@ class _InputFormBackground extends StatelessWidget {
     );
   }
 }
+

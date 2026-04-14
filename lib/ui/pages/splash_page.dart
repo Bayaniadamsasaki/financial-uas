@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:finalcial_records/shared/theme.dart';
 import 'package:flutter/material.dart';
@@ -11,243 +12,294 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+    with TickerProviderStateMixin {
+  late final AnimationController _introController;
+  late final AnimationController _ambientController;
   late final Animation<double> _fadeAnimation;
-  late final Animation<double> _logoScaleAnimation;
   late final Animation<Offset> _slideAnimation;
+
+  Timer? _nextPageTimer;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    _introController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
 
-    _fadeAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    );
+    _ambientController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat();
 
-    _logoScaleAnimation = Tween<double>(
-      begin: 0.84,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutBack,
-      ),
+    _fadeAnimation = CurvedAnimation(
+      parent: _introController,
+      curve: Curves.easeOutCubic,
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.06),
+      begin: const Offset(0, 0.07),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
-        parent: _controller,
+        parent: _introController,
         curve: Curves.easeOutCubic,
       ),
     );
 
-    _controller.forward();
+    _introController.forward();
 
-    Timer(
-      const Duration(milliseconds: 2300),
-      () {
-        if (!mounted) {
-          return;
-        }
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/sign-in',
-          (route) => false,
-        );
-      },
+    _nextPageTimer = Timer(
+      const Duration(milliseconds: 2800),
+      _goToSignIn,
+    );
+  }
+
+  void _goToSignIn() {
+    if (!mounted || _hasNavigated) {
+      return;
+    }
+
+    _hasNavigated = true;
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/sign-in',
+      (route) => false,
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _nextPageTimer?.cancel();
+    _introController.dispose();
+    _ambientController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xffE7F6FF),
-              lightBackgroundColor,
-              whiteColor,
-            ],
-          ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: -80,
-              right: -70,
-              child: Container(
-                width: 240,
-                height: 240,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      birulangit.withOpacity(0.22),
-                      birulangit.withOpacity(0.03),
-                    ],
-                  ),
+      body: GestureDetector(
+        onTap: _goToSignIn,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedBuilder(
+          animation: _ambientController,
+          builder: (context, _) {
+            final double t = _ambientController.value;
+            final double wave = math.sin(t * 2 * math.pi);
+            final double pulse = 1 + (math.sin(t * 2 * math.pi) * 0.03);
+            final double tapHintOpacity = 0.55 + (wave.abs() * 0.45);
+
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xffE7F6FF),
+                    lightBackgroundColor,
+                    whiteColor,
+                  ],
                 ),
               ),
-            ),
-            Positioned(
-              bottom: -90,
-              left: -60,
-              child: Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      greenColor.withOpacity(0.17),
-                      greenColor.withOpacity(0.02),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 28),
-                    padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          whiteColor,
-                          const Color(0xffF7FCFF),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(
-                        color: blueColor.withOpacity(0.15),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: blackColor.withOpacity(0.08),
-                          blurRadius: 22,
-                          offset: const Offset(0, 12),
-                        ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: -90 + (wave * 16),
+                    right: -80,
+                    child: _SplashBlurOrb(
+                      size: 260,
+                      colors: [
+                        birulangit.withValues(alpha: 0.2),
+                        birulangit.withValues(alpha: 0.02),
                       ],
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
+                  ),
+                  Positioned(
+                    bottom: -110 - (wave * 14),
+                    left: -70,
+                    child: _SplashBlurOrb(
+                      size: 250,
+                      colors: [
+                        greenColor.withValues(alpha: 0.16),
+                        greenColor.withValues(alpha: 0.01),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 180 + (wave * 10),
+                    left: -110,
+                    child: _SplashBlurOrb(
+                      size: 220,
+                      colors: [
+                        blueColor.withValues(alpha: 0.13),
+                        blueColor.withValues(alpha: 0.01),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 28),
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 22),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(99),
-                            color: blueLightColor,
-                          ),
-                          child: Text(
-                            'PERSONAL FINANCE TRACKER',
-                            style: blueTextStyle.copyWith(
-                              fontSize: 10,
-                              letterSpacing: 0.5,
-                              fontWeight: semiBold,
+                            borderRadius: BorderRadius.circular(30),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                whiteColor,
+                                const Color(0xffF7FCFF),
+                              ],
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        ScaleTransition(
-                          scale: _logoScaleAnimation,
-                          child: Container(
-                            width: 98,
-                            height: 98,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  birulangit.withOpacity(0.2),
-                                  birulangit.withOpacity(0.08),
-                                ],
+                            border: Border.all(
+                              color: blueColor.withValues(alpha: 0.15),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: blackColor.withValues(alpha: 0.08),
+                                blurRadius: 24,
+                                offset: const Offset(0, 12),
                               ),
-                              border: Border.all(
-                                color: birulangit.withOpacity(0.2),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: blueLightColor,
+                                  borderRadius: BorderRadius.circular(99),
+                                ),
+                                child: Text(
+                                  'PERSONAL FINANCE TRACKER',
+                                  style: blueTextStyle.copyWith(
+                                    fontSize: 10,
+                                    letterSpacing: 0.55,
+                                    fontWeight: semiBold,
+                                  ),
+                                ),
                               ),
-                            ),
-                            child: const Image(
-                              image: AssetImage('assets/money.png'),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                          'Financial Records',
-                          style: blackTextStyle.copyWith(
-                            fontSize: 24,
-                            fontWeight: extraBold,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Merapikan pemasukan dan pengeluaranmu setiap hari.',
-                          textAlign: TextAlign.center,
-                          style: greyBlackTextStyle.copyWith(
-                            fontSize: 13,
-                            height: 1.45,
-                          ),
-                        ),
-                        const SizedBox(height: 18),
-                        SizedBox(
-                          width: 180,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(99),
-                            child: LinearProgressIndicator(
-                              minHeight: 7,
-                              backgroundColor: blueLightColor,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                birulangit,
+                              const SizedBox(height: 16),
+                              Transform.scale(
+                                scale: pulse,
+                                child: Transform.translate(
+                                  offset: Offset(0, wave * 3),
+                                  child: Container(
+                                    width: 112,
+                                    height: 112,
+                                    padding: const EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          birulangit.withValues(alpha: 0.2),
+                                          birulangit.withValues(alpha: 0.08),
+                                        ],
+                                      ),
+                                      border: Border.all(
+                                        color: birulangit.withValues(alpha: 0.2),
+                                        width: 1.5,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: birulangit.withValues(alpha: 0.18),
+                                          blurRadius: 20,
+                                          offset: const Offset(0, 8),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Image(
+                                      image: AssetImage('assets/money.png'),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Financial Records',
+                                style: blackTextStyle.copyWith(
+                                  fontSize: 27,
+                                  fontWeight: extraBold,
+                                  height: 1.1,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Lacak pemasukan dan pengeluaran dengan cara yang lebih cerdas.',
+                                textAlign: TextAlign.center,
+                                style: greyBlackTextStyle.copyWith(
+                                  fontSize: 13,
+                                  height: 1.45,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Opacity(
+                                opacity: tapHintOpacity.clamp(0, 1),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.touch_app_rounded,
+                                      size: 16,
+                                      color: birulangit,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Tap untuk mulai',
+                                      style: blueTextStyle.copyWith(
+                                        fontSize: 12,
+                                        fontWeight: semiBold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Menyiapkan dashboard kamu...',
-                          style: greyTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: medium,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
+            );
+          },
         ),
+      ),
+    );
+  }
+}
+
+class _SplashBlurOrb extends StatelessWidget {
+  const _SplashBlurOrb({
+    required this.size,
+    required this.colors,
+  });
+
+  final double size;
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(colors: colors),
       ),
     );
   }

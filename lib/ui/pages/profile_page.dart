@@ -1,4 +1,4 @@
-import 'package:finalcial_records/shared/shared_methods.dart';
+﻿import 'package:finalcial_records/shared/shared_methods.dart';
 import 'package:finalcial_records/shared/shared_preferences.dart';
 import 'package:finalcial_records/shared/theme.dart';
 import 'package:finalcial_records/ui/widgets/profile_menu_item.dart';
@@ -39,7 +39,7 @@ class ProfilePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(22),
                     boxShadow: [
                       BoxShadow(
-                        color: blackColor.withOpacity(0.05),
+                        color: blackColor.withValues(alpha: 0.05),
                         blurRadius: 18,
                         offset: const Offset(0, 8),
                       ),
@@ -121,7 +121,7 @@ class ProfilePage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: birulangit.withOpacity(0.28),
+            color: birulangit.withValues(alpha: 0.28),
             blurRadius: 22,
             offset: const Offset(0, 12),
           ),
@@ -186,7 +186,7 @@ class ProfilePage extends StatelessWidget {
                 (snapshot.data ?? '-').toString(),
                 style: whiteTextStyle.copyWith(
                   fontSize: 13,
-                  color: whiteColor.withOpacity(0.9),
+                  color: whiteColor.withValues(alpha: 0.9),
                 ),
               );
             },
@@ -199,7 +199,7 @@ class ProfilePage extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: whiteColor.withOpacity(0.18),
+              color: whiteColor.withValues(alpha: 0.18),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -215,7 +215,7 @@ class ProfilePage extends StatelessWidget {
                   style: whiteTextStyle.copyWith(
                     fontSize: 12,
                     fontWeight: medium,
-                    color: whiteColor.withOpacity(0.95),
+                    color: whiteColor.withValues(alpha: 0.95),
                   ),
                 ),
               ],
@@ -270,7 +270,7 @@ class ProfilePage extends StatelessWidget {
         color: whiteColor,
         boxShadow: [
           BoxShadow(
-            color: blackColor.withOpacity(0.04),
+            color: blackColor.withValues(alpha: 0.04),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -337,8 +337,8 @@ class _ProfileBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    birulangit.withOpacity(0.14),
-                    birulangit.withOpacity(0.02),
+                    birulangit.withValues(alpha: 0.14),
+                    birulangit.withValues(alpha: 0.02),
                   ],
                 ),
               ),
@@ -349,3 +349,4 @@ class _ProfileBackground extends StatelessWidget {
     );
   }
 }
+

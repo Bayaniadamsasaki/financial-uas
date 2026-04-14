@@ -1,4 +1,4 @@
-import 'package:finalcial_records/shared/theme.dart';
+﻿import 'package:finalcial_records/shared/theme.dart';
 import 'package:flutter/material.dart';
 
 enum ToastType { info, success, warning, error }
@@ -31,7 +31,7 @@ class CustomSnackBar {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: style.gradient.first.withOpacity(0.35),
+                  color: style.gradient.first.withValues(alpha: 0.35),
                   blurRadius: 18,
                   offset: const Offset(0, 8),
                 ),
@@ -85,7 +85,7 @@ class CustomSnackBar {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: blackColor.withOpacity(0.12),
+                  color: blackColor.withValues(alpha: 0.12),
                   blurRadius: 20,
                   offset: const Offset(0, 12),
                 ),
@@ -99,7 +99,7 @@ class CustomSnackBar {
                   height: 54,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: activeAccent.withOpacity(0.12),
+                    color: activeAccent.withValues(alpha: 0.12),
                   ),
                   child: Icon(
                     icon,
@@ -134,7 +134,7 @@ class CustomSnackBar {
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size.fromHeight(46),
                           side: BorderSide(
-                            color: blueColor.withOpacity(0.35),
+                            color: blueColor.withValues(alpha: 0.35),
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -223,3 +223,4 @@ class _ToastStyle {
   final List<Color> gradient;
   final Color foregroundColor;
 }
+

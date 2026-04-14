@@ -1,4 +1,4 @@
-import 'package:finalcial_records/shared/theme.dart';
+﻿import 'package:finalcial_records/shared/theme.dart';
 import 'package:flutter/material.dart';
 
 class HistoryTransactionItem extends StatelessWidget {
@@ -30,7 +30,7 @@ class HistoryTransactionItem extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: blueLightColor.withOpacity(0.42),
+        color: blueLightColor.withValues(alpha: 0.42),
       ),
       child: Row(
         children: [
@@ -73,7 +73,7 @@ class HistoryTransactionItem extends StatelessWidget {
                     note!,
                     style: greyBlackTextStyle.copyWith(
                       fontSize: 12,
-                      color: greyBlackColor.withOpacity(0.86),
+                      color: greyBlackColor.withValues(alpha: 0.86),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -106,7 +106,7 @@ class HistoryTransactionItem extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(99),
-                      color: readColor.withOpacity(0.1),
+                      color: readColor.withValues(alpha: 0.1),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -137,3 +137,4 @@ class HistoryTransactionItem extends StatelessWidget {
     );
   }
 }
+

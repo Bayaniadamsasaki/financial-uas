@@ -1,4 +1,4 @@
-import 'package:finalcial_records/shared/theme.dart';
+﻿import 'package:finalcial_records/shared/theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomFormField extends StatelessWidget {
@@ -65,22 +65,22 @@ class CustomFormField extends StatelessWidget {
                 ? Icon(
                     prefixIcon,
                     size: 20,
-                    color: greyBlackColor.withOpacity(0.75),
+                    color: greyBlackColor.withValues(alpha: 0.75),
                   )
                 : null,
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: blueLightColor.withOpacity(0.35),
+            fillColor: blueLightColor.withValues(alpha: 0.35),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: blueColor.withOpacity(0.2),
+                color: blueColor.withValues(alpha: 0.2),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: blueColor.withOpacity(0.2),
+                color: blueColor.withValues(alpha: 0.2),
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -100,3 +100,4 @@ class CustomFormField extends StatelessWidget {
     );
   }
 }
+
