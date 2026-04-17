@@ -809,108 +809,100 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
   }
 
   Widget _buildFormState() {
-    final double keyboardInset = MediaQuery.of(context).viewInsets.bottom;
-
     return Stack(
       children: [
         const _InputFormBackground(),
         SafeArea(
-          child: AnimatedPadding(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            padding: EdgeInsets.only(bottom: keyboardInset),
-            child: Form(
-              key: formKey,
-              child: SingleChildScrollView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
+          child: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              keyboardDismissBehavior:
+                  ScrollViewKeyboardDismissBehavior.onDrag,
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: whiteColor,
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: blackColor.withValues(alpha: 0.06),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: whiteColor,
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: blackColor.withValues(alpha: 0.06),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildFormIntroSection(),
+                      const SizedBox(height: 18),
+                      CustomFormField(
+                        title: 'Tanggal',
+                        hintText: 'Pilih tanggal transaksi',
+                        controller: tanggalControl,
+                        readOnly: true,
+                        onTap: _selectDate,
+                        prefixIcon: Icons.calendar_today_outlined,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Tipe Transaksi',
+                        style: blackTextStyle.copyWith(
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          _buildTransactionTypeOption(
+                            'Pengeluaran',
+                            TipeTransaksi.pengeluaran,
+                            Icons.trending_down_rounded,
+                          ),
+                          const SizedBox(width: 10),
+                          _buildTransactionTypeOption(
+                            'Pemasukan',
+                            TipeTransaksi.pemasukan,
+                            Icons.trending_up_rounded,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Kategori',
+                        style: blackTextStyle.copyWith(
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCategoryDropdown(),
+                      const SizedBox(height: 16),
+                      CustomFormField(
+                        title: 'Jumlah',
+                        hintText: 'Masukkan nominal',
+                        controller: jumlahControl,
+                        inputType: TextInputType.number,
+                        prefixIcon: Icons.payments_outlined,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomFormField(
+                        title: 'Catatan',
+                        hintText: 'Tulis catatan singkat transaksi',
+                        controller: catatanControl,
+                        prefixIcon: Icons.notes_rounded,
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 30),
+                      CustomFillButton(
+                        title: 'Simpan Catatan',
+                        onPressed: _onSubmitPressed,
                       ),
                     ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildFormIntroSection(),
-                        const SizedBox(height: 18),
-                        CustomFormField(
-                          title: 'Tanggal',
-                          hintText: 'Pilih tanggal transaksi',
-                          controller: tanggalControl,
-                          readOnly: true,
-                          onTap: _selectDate,
-                          prefixIcon: Icons.calendar_today_outlined,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Tipe Transaksi',
-                          style: blackTextStyle.copyWith(
-                            fontWeight: semiBold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            _buildTransactionTypeOption(
-                              'Pengeluaran',
-                              TipeTransaksi.pengeluaran,
-                              Icons.trending_down_rounded,
-                            ),
-                            const SizedBox(width: 10),
-                            _buildTransactionTypeOption(
-                              'Pemasukan',
-                              TipeTransaksi.pemasukan,
-                              Icons.trending_up_rounded,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Kategori',
-                          style: blackTextStyle.copyWith(
-                            fontWeight: semiBold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        _buildCategoryDropdown(),
-                        const SizedBox(height: 16),
-                        CustomFormField(
-                          title: 'Jumlah',
-                          hintText: 'Masukkan nominal',
-                          controller: jumlahControl,
-                          inputType: TextInputType.number,
-                          prefixIcon: Icons.payments_outlined,
-                          scrollPadding: const EdgeInsets.only(bottom: 240),
-                        ),
-                        const SizedBox(height: 16),
-                        CustomFormField(
-                          title: 'Catatan',
-                          hintText: 'Tulis catatan singkat transaksi',
-                          controller: catatanControl,
-                          prefixIcon: Icons.notes_rounded,
-                          maxLines: 3,
-                        ),
-                        const SizedBox(height: 30),
-                        CustomFillButton(
-                          title: 'Simpan Catatan',
-                          onPressed: _onSubmitPressed,
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -924,6 +916,7 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Catatan Keuangan'),
         leading: IconButton(

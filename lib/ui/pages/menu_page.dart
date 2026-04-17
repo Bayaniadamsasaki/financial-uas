@@ -55,12 +55,42 @@ class _MenuPageState extends State<MenuPage> {
     String catatanString = prefs.getString('catatan_key') ?? '';
     if (catatanString.isNotEmpty) {
       try {
-        return Catatan.decode(catatanString);
+        final List<Catatan> items = Catatan.decode(catatanString);
+        items.sort((a, b) {
+          final DateTime aDate = _parseTransactionDate(a.tanggal);
+          final DateTime bDate = _parseTransactionDate(b.tanggal);
+          final int dateComparison = bDate.compareTo(aDate);
+
+          if (dateComparison != 0) {
+            return dateComparison;
+          }
+
+          return (b.id ?? '').compareTo(a.id ?? '');
+        });
+        return items;
       } catch (_) {
         await prefs.remove('catatan_key');
       }
     }
     return [];
+  }
+
+  DateTime _parseTransactionDate(String? value) {
+    final String rawDate = (value ?? '').trim();
+    if (rawDate.isEmpty) {
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    }
+
+    try {
+      return DateFormat('dd MMMM yyyy', 'id_ID').parseStrict(rawDate);
+    } catch (_) {
+      try {
+        return DateFormat('dd MMMM yyyy').parseStrict(rawDate);
+      } catch (_) {
+        return DateTime.tryParse(rawDate) ??
+            DateTime.fromMillisecondsSinceEpoch(0);
+      }
+    }
   }
 
   int _subtractFloorZero(int source, int delta) {

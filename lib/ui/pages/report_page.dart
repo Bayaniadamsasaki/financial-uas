@@ -17,6 +17,151 @@ class ReportPage extends StatefulWidget {
 class _ReportPageState extends State<ReportPage> {
   late Future<List<Catatan>> _transactionFuture;
 
+  Widget _buildHeroHeader() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xff038EEA),
+            Color(0xff26BAFF),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: birulangit.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: whiteColor.withValues(alpha: 0.22),
+            ),
+            child: Icon(
+              Icons.pie_chart_rounded,
+              color: whiteColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ringkasan Keuangan',
+                  style: whiteTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: extraBold,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  'Lihat tren pemasukan dan pengeluaran per periode.',
+                  style: whiteTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: medium,
+                    color: whiteColor.withValues(alpha: 0.93),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.auto_graph_rounded,
+            color: whiteColor.withValues(alpha: 0.92),
+            size: 24,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPeriodTabs() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: whiteColor.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: blueColor.withValues(alpha: 0.2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: blackColor.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: TabBar(
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
+        splashBorderRadius: BorderRadius.circular(12),
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xff0A95EE),
+              Color(0xff1398F2),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: birulangit.withValues(alpha: 0.26),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        labelColor: whiteColor,
+        unselectedLabelColor: greyBlackColor,
+        labelStyle: whiteTextStyle.copyWith(
+          fontSize: 11,
+          fontWeight: semiBold,
+        ),
+        unselectedLabelStyle: blackTextStyle.copyWith(
+          fontSize: 11,
+          fontWeight: medium,
+        ),
+        tabs: const [
+          Tab(
+            child: _ReportPeriodTabLabel(
+              text: 'Bulan Ini',
+              icon: Icons.calendar_today_rounded,
+            ),
+          ),
+          Tab(
+            child: _ReportPeriodTabLabel(
+              text: 'Bulan Lalu',
+              icon: Icons.history_rounded,
+            ),
+          ),
+          Tab(
+            child: _ReportPeriodTabLabel(
+              text: '3 Bulan',
+              icon: Icons.date_range_rounded,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,74 +208,126 @@ class _ReportPageState extends State<ReportPage> {
             ),
           ],
         ),
-        body: Column(
+        body: Stack(
           children: [
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: whiteColor,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: blackColor.withValues(alpha: 0.05),
-                    blurRadius: 12,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: TabBar(
-                isScrollable: true,
-                dividerColor: Colors.transparent,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: BoxDecoration(
-                  color: birulangit,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                labelColor: whiteColor,
-                unselectedLabelColor: greyBlackColor,
-                labelStyle: whiteTextStyle.copyWith(
-                  fontSize: 12,
-                  fontWeight: semiBold,
-                ),
-                unselectedLabelStyle: blackTextStyle.copyWith(
-                  fontSize: 12,
-                  fontWeight: medium,
-                ),
-                tabs: const [
-                  Tab(text: 'Bulan Ini'),
-                  Tab(text: 'Bulan Lalu'),
-                  Tab(text: '3 Bulan'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: FutureBuilder<List<Catatan>>(
-                future: _transactionFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: birulangit,
-                      ),
-                    );
-                  }
+            const _ReportBackground(),
+            Column(
+              children: [
+                _buildHeroHeader(),
+                _buildPeriodTabs(),
+                Expanded(
+                  child: FutureBuilder<List<Catatan>>(
+                    future: _transactionFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: birulangit,
+                          ),
+                        );
+                      }
 
-                  final List<Catatan> items = snapshot.data ?? [];
+                      final List<Catatan> items = snapshot.data ?? [];
 
-                  return TabBarView(
-                    children: _ReportWindow.values.map((window) {
-                      return _ReportWindowView(
-                        window: window,
-                        transactions: items,
+                      return TabBarView(
+                        children: _ReportWindow.values.map((window) {
+                          return _ReportWindowView(
+                            window: window,
+                            transactions: items,
+                          );
+                        }).toList(),
                       );
-                    }).toList(),
-                  );
-                },
-              ),
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ReportPeriodTabLabel extends StatelessWidget {
+  const _ReportPeriodTabLabel({
+    required this.text,
+    required this.icon,
+  });
+
+  final String text;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14),
+          const SizedBox(width: 5),
+          Text(text),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReportBackground extends StatelessWidget {
+  const _ReportBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xffE8F6FF),
+            lightBackgroundColor,
+            whiteColor,
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: -90,
+            right: -90,
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    birulangit.withValues(alpha: 0.16),
+                    birulangit.withValues(alpha: 0.02),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 260,
+            left: -110,
+            child: Container(
+              width: 210,
+              height: 210,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    blueColor.withValues(alpha: 0.12),
+                    blueColor.withValues(alpha: 0.01),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -718,8 +915,18 @@ class _ReportWindowView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: whiteColor,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                whiteColor,
+                const Color(0xffF5FBFF),
+              ],
+            ),
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: blueColor.withValues(alpha: 0.2),
+            ),
             boxShadow: [
               BoxShadow(
                 color: blackColor.withValues(alpha: 0.05),
@@ -731,26 +938,50 @@ class _ReportWindowView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                info.title,
-                style: blackTextStyle.copyWith(
-                  fontSize: 15,
-                  fontWeight: semiBold,
-                ),
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: blueLightColor,
+                    ),
+                    child: Icon(
+                      Icons.calendar_view_month_rounded,
+                      color: birulangit,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          info.title,
+                          style: blackTextStyle.copyWith(
+                            fontSize: 15,
+                            fontWeight: semiBold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _periodText(info.start, info.end),
+                          style: greyBlackTextStyle.copyWith(
+                            fontSize: 13,
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                _periodText(info.start, info.end),
-                style: greyBlackTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: medium,
-                ),
-              ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
-                  vertical: 6,
+                  vertical: 7,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(99),

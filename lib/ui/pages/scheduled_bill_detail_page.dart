@@ -65,6 +65,44 @@ class _ScheduledBillDetailPageState extends State<ScheduledBillDetailPage> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       helpText: 'Pilih jatuh tempo',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: birulangit,
+              onPrimary: whiteColor,
+              onSurface: blackColor,
+              surface: whiteColor,
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: whiteColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              headerBackgroundColor: birulangit,
+              headerForegroundColor: whiteColor,
+              weekdayStyle: greyBlackTextStyle.copyWith(
+                fontWeight: semiBold,
+              ),
+              dayStyle: blackTextStyle.copyWith(
+                fontWeight: medium,
+              ),
+              yearStyle: blackTextStyle.copyWith(
+                fontWeight: medium,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: birulangit,
+                textStyle: blackTextStyle.copyWith(
+                  fontWeight: semiBold,
+                ),
+              ),
+            ),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
 
     if (pickedDate == null) {
