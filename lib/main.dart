@@ -6,7 +6,6 @@ import 'package:finalcial_records/ui/pages/profile_page.dart';
 import 'package:finalcial_records/ui/pages/report_page.dart';
 import 'package:finalcial_records/ui/pages/sign_in_page.dart';
 import 'package:finalcial_records/ui/pages/sign_up_page.dart';
-import 'package:finalcial_records/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -51,7 +50,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routes: {
-        '/': (context) => const SplashPage(),
+        '/': (context) => const SignInPage(),
         '/sign-in': (context) => const SignInPage(),
         '/sign-up': (context) => const SignUpPage(),
         '/menu': (context) => const MenuPage(),
