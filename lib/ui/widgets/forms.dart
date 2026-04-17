@@ -18,6 +18,7 @@ class CustomFormField extends StatelessWidget {
     this.onChanged,
     this.maxLines = 1,
     this.inputFormatters,
+    this.scrollPadding = const EdgeInsets.all(24),
   });
 
   final String title;
@@ -33,6 +34,7 @@ class CustomFormField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final int maxLines;
   final List<TextInputFormatter>? inputFormatters;
+  final EdgeInsets scrollPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class CustomFormField extends StatelessWidget {
           obscureText: obscureText,
           controller: controller,
           readOnly: readOnly,
+          scrollPadding: scrollPadding,
           onTap: onTap,
           onChanged: onChanged,
           inputFormatters: inputFormatters,

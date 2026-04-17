@@ -267,8 +267,13 @@ class _MenuPageState extends State<MenuPage> {
     return type.contains('pemasukan');
   }
 
-  List<Catatan> _applyHistoryFilter(List<Catatan> items) {
-    switch (_selectedHistoryFilter) {
+  List<Catatan> _applyHistoryFilter(
+    List<Catatan> items, {
+    _HistoryFilter? filter,
+  }) {
+    final _HistoryFilter activeFilter = filter ?? _selectedHistoryFilter;
+
+    switch (activeFilter) {
       case _HistoryFilter.all:
         return items;
       case _HistoryFilter.income:
@@ -278,8 +283,10 @@ class _MenuPageState extends State<MenuPage> {
     }
   }
 
-  String _activeFilterLabel() {
-    switch (_selectedHistoryFilter) {
+  String _activeFilterLabel([_HistoryFilter? filter]) {
+    final _HistoryFilter activeFilter = filter ?? _selectedHistoryFilter;
+
+    switch (activeFilter) {
       case _HistoryFilter.all:
         return 'Semua';
       case _HistoryFilter.income:
@@ -287,6 +294,257 @@ class _MenuPageState extends State<MenuPage> {
       case _HistoryFilter.expense:
         return 'Pengeluaran';
     }
+  }
+
+  Future<void> _openHistoryBottomSheet() async {
+    _HistoryFilter sheetFilter = _selectedHistoryFilter;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (context, sheetSetState) {
+            return FractionallySizedBox(
+              heightFactor: 0.9,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: lightBackgroundColor,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(28),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    Container(
+                      width: 48,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: greyColor.withValues(alpha: 0.45),
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Histori Transaksi',
+                            style: blackTextStyle.copyWith(
+                              fontSize: 20,
+                              fontWeight: semiBold,
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: blueLightColor,
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                            child: Text(
+                              'Filter: ${_activeFilterLabel(sheetFilter)}',
+                              style: blueTextStyle.copyWith(
+                                fontSize: 12,
+                                fontWeight: semiBold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildHistoryFilterChip(
+                              filter: _HistoryFilter.all,
+                              label: 'Semua',
+                              selectedFilter: sheetFilter,
+                              onSelected: (value) {
+                                sheetSetState(() {
+                                  sheetFilter = value;
+                                });
+                                setState(() {
+                                  _selectedHistoryFilter = value;
+                                });
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            _buildHistoryFilterChip(
+                              filter: _HistoryFilter.income,
+                              label: 'Pemasukan',
+                              selectedFilter: sheetFilter,
+                              onSelected: (value) {
+                                sheetSetState(() {
+                                  sheetFilter = value;
+                                });
+                                setState(() {
+                                  _selectedHistoryFilter = value;
+                                });
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            _buildHistoryFilterChip(
+                              filter: _HistoryFilter.expense,
+                              label: 'Pengeluaran',
+                              selectedFilter: sheetFilter,
+                              onSelected: (value) {
+                                sheetSetState(() {
+                                  sheetFilter = value;
+                                });
+                                setState(() {
+                                  _selectedHistoryFilter = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.fromLTRB(20, 14, 20, 18),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: whiteColor,
+                          boxShadow: [
+                            BoxShadow(
+                              color: blackColor.withValues(alpha: 0.04),
+                              blurRadius: 18,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: FutureBuilder<List<Catatan>>(
+                          future: readCatatan(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: birulangit,
+                                ),
+                              );
+                            }
+
+                            final List<Catatan> items = snapshot.data ?? [];
+                            if (items.isEmpty) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 18,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: blueLightColor.withValues(alpha: 0.5),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.receipt_long_outlined,
+                                      color: birulangit,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        'Belum ada transaksi. Yuk tambah catatan pertamamu.',
+                                        style: greyBlackTextStyle.copyWith(
+                                          fontSize: 13,
+                                          fontWeight: medium,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            final List<Catatan> filteredItems =
+                                _applyHistoryFilter(
+                              items,
+                              filter: sheetFilter,
+                            );
+
+                            if (filteredItems.isEmpty) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 18,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: blueLightColor.withValues(alpha: 0.5),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.filter_alt_off_outlined,
+                                      color: birulangit,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        'Tidak ada transaksi untuk filter ${_activeFilterLabel(sheetFilter).toLowerCase()}.',
+                                        style: greyBlackTextStyle.copyWith(
+                                          fontSize: 13,
+                                          fontWeight: medium,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return ListView.separated(
+                              itemCount: filteredItems.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 10),
+                              itemBuilder: (context, index) {
+                                final Catatan item = filteredItems[index];
+                                final bool isPemasukan =
+                                    _isIncomeTransaction(item);
+
+                                return HistoryTransactionItem(
+                                  iconUrl: isPemasukan
+                                      ? 'assets/transaksi_pemasukan.png'
+                                      : 'assets/transaksi_pengeluaran.png',
+                                  title: item.kategori.toString(),
+                                  date: item.tanggal.toString(),
+                                  note: item.catatan ?? '',
+                                  value: isPemasukan
+                                      ? '+ ${formatCurrency(item.jumlah, symbol: '')}'
+                                      : '- ${formatCurrency(item.jumlah, symbol: '')}',
+                                  onDelete: () async {
+                                    await _onDeletePressed(item);
+                                    sheetSetState(() {});
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> _onScheduledBillTypeTap(_ScheduledBillType billType) async {
@@ -329,8 +587,10 @@ class _MenuPageState extends State<MenuPage> {
   Widget _buildHistoryFilterChip({
     required _HistoryFilter filter,
     required String label,
+    required _HistoryFilter selectedFilter,
+    required ValueChanged<_HistoryFilter> onSelected,
   }) {
-    final bool isSelected = _selectedHistoryFilter == filter;
+    final bool isSelected = selectedFilter == filter;
 
     return ChoiceChip(
       label: Text(
@@ -353,9 +613,7 @@ class _MenuPageState extends State<MenuPage> {
         vertical: 2,
       ),
       onSelected: (_) {
-        setState(() {
-          _selectedHistoryFilter = filter;
-        });
+        onSelected(filter);
       },
     );
   }
@@ -372,8 +630,8 @@ class _MenuPageState extends State<MenuPage> {
               children: [
                 buildProfile(context),
                 buildWallet(context),
+                buildFinancialReportShortcut(context),
                 buildScheduledBills(context),
-                buildHistory(context),
               ],
             ),
           ),
@@ -476,29 +734,6 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ),
           const SizedBox(width: 12),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/report');
-            },
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: blueLightColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: birulangit.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Icon(
-                Icons.pie_chart_rounded,
-                color: birulangit,
-                size: 22,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
               Navigator.pushNamed(context, '/profile');
@@ -538,97 +773,219 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Widget buildWallet(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 24),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(26),
-        color: whiteColor,
-        boxShadow: [
-          BoxShadow(
-            color: blackColor.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+  Widget buildFinancialReportShortcut(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, '/report');
+      },
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        margin: const EdgeInsets.only(top: 18),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: whiteColor,
+          border: Border.all(
+            color: birulangit.withValues(alpha: 0.15),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: blueLightColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.account_balance_wallet_outlined,
-                  color: birulangit,
-                ),
+          boxShadow: [
+            BoxShadow(
+              color: blackColor.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: blueLightColor,
+                borderRadius: BorderRadius.circular(12),
               ),
-              const SizedBox(width: 12),
-              Column(
+              child: Icon(
+                Icons.analytics_rounded,
+                color: birulangit,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Total Saldo',
+                    'Laporan Keuangan',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 15,
+                      fontWeight: semiBold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Lihat ringkasan pemasukan, pengeluaran, dan tren bulanan.',
                     style: greyTextStyle.copyWith(
                       fontSize: 12,
                       fontWeight: medium,
                     ),
                   ),
-                  Text(
-                    'Ringkasan Keuanganmu',
-                    style: blackTextStyle.copyWith(
-                      fontSize: 14,
-                      fontWeight: semiBold,
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: birulangit,
+              size: 24,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildWallet(BuildContext context) {
+    return InkWell(
+      onTap: _openHistoryBottomSheet,
+      borderRadius: BorderRadius.circular(26),
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(26),
+          color: whiteColor,
+          boxShadow: [
+            BoxShadow(
+              color: blackColor.withValues(alpha: 0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: blueLightColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.account_balance_wallet_outlined,
+                    color: birulangit,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Saldo',
+                      style: greyTextStyle.copyWith(
+                        fontSize: 12,
+                        fontWeight: medium,
+                      ),
                     ),
+                    Text(
+                      'Ringkasan Keuanganmu',
+                      style: blackTextStyle.copyWith(
+                        fontSize: 14,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.history_rounded,
+                  color: birulangit,
+                  size: 22,
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            FutureBuilder<int>(
+              future: SharedPrefUtils.readSaldo(),
+              builder: (context, snapshot) {
+                return Text(
+                  formatCurrency(snapshot.data ?? 0),
+                  style: blackTextStyle.copyWith(
+                    fontSize: 30,
+                    fontWeight: extraBold,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildAmountTile(
+                    title: 'Pemasukan',
+                    futureAmount: SharedPrefUtils.readPemasukan(),
+                    icon: Icons.trending_up_rounded,
+                    accent: greenColor,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildAmountTile(
+                    title: 'Pengeluaran',
+                    futureAmount: SharedPrefUtils.readPengeluaran(),
+                    icon: Icons.trending_down_rounded,
+                    accent: readColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: blueLightColor.withValues(alpha: 0.5),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.touch_app_rounded,
+                    color: birulangit,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Tap kartu saldo untuk melihat histori transaksi.',
+                      style: greyBlackTextStyle.copyWith(
+                        fontSize: 12,
+                        fontWeight: medium,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.keyboard_arrow_up_rounded,
+                    color: birulangit,
+                    size: 18,
                   ),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          FutureBuilder<int>(
-            future: SharedPrefUtils.readSaldo(),
-            builder: (context, snapshot) {
-              return Text(
-                formatCurrency(snapshot.data ?? 0),
-                style: blackTextStyle.copyWith(
-                  fontSize: 30,
-                  fontWeight: extraBold,
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildAmountTile(
-                  title: 'Pemasukan',
-                  futureAmount: SharedPrefUtils.readPemasukan(),
-                  icon: Icons.trending_up_rounded,
-                  accent: greenColor,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildAmountTile(
-                  title: 'Pengeluaran',
-                  futureAmount: SharedPrefUtils.readPengeluaran(),
-                  icon: Icons.trending_down_rounded,
-                  accent: readColor,
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -967,191 +1324,6 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Widget buildHistory(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Histori Transaksi',
-                style: blackTextStyle.copyWith(
-                  fontSize: 18,
-                  fontWeight: semiBold,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: blueLightColor,
-                  borderRadius: BorderRadius.circular(99),
-                ),
-                child: Text(
-                  'Filter: ${_activeFilterLabel()}',
-                  style: blueTextStyle.copyWith(
-                    fontSize: 12,
-                    fontWeight: semiBold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildHistoryFilterChip(
-                  filter: _HistoryFilter.all,
-                  label: 'Semua',
-                ),
-                const SizedBox(width: 8),
-                _buildHistoryFilterChip(
-                  filter: _HistoryFilter.income,
-                  label: 'Pemasukan',
-                ),
-                const SizedBox(width: 8),
-                _buildHistoryFilterChip(
-                  filter: _HistoryFilter.expense,
-                  label: 'Pengeluaran',
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(top: 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: whiteColor,
-              boxShadow: [
-                BoxShadow(
-                  color: blackColor.withValues(alpha: 0.04),
-                  blurRadius: 18,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: FutureBuilder<List<Catatan>>(
-              future: readCatatan(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: birulangit,
-                      ),
-                    ),
-                  );
-                }
-
-                final List<Catatan> items = snapshot.data ?? [];
-                if (items.isEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 18,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
-                      color: blueLightColor.withValues(alpha: 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.receipt_long_outlined,
-                          color: birulangit,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Belum ada transaksi. Yuk tambah catatan pertamamu.',
-                            style: greyBlackTextStyle.copyWith(
-                              fontSize: 13,
-                              fontWeight: medium,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                final List<Catatan> filteredItems = _applyHistoryFilter(items);
-                if (filteredItems.isEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 18,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
-                      color: blueLightColor.withValues(alpha: 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.filter_alt_off_outlined,
-                          color: birulangit,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Tidak ada transaksi untuk filter ${_activeFilterLabel().toLowerCase()}.',
-                            style: greyBlackTextStyle.copyWith(
-                              fontSize: 13,
-                              fontWeight: medium,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: filteredItems.length,
-                  separatorBuilder: (context, index) => const SizedBox(
-                    height: 10,
-                  ),
-                  itemBuilder: (context, index) {
-                    final Catatan item = filteredItems[index];
-                    final bool isPemasukan = _isIncomeTransaction(item);
-
-                    return HistoryTransactionItem(
-                      iconUrl: isPemasukan
-                          ? 'assets/transaksi_pemasukan.png'
-                          : 'assets/transaksi_pengeluaran.png',
-                      title: item.kategori.toString(),
-                      date: item.tanggal.toString(),
-                      note: item.catatan ?? '',
-                      value: isPemasukan
-                          ? '+ ${formatCurrency(item.jumlah, symbol: '')}'
-                          : '- ${formatCurrency(item.jumlah, symbol: '')}',
-                      onDelete: () {
-                        _onDeletePressed(item);
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _ScheduledBillType {

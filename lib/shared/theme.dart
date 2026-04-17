@@ -18,27 +18,27 @@ Color greenColor = const Color(0xff22B07D);
 Color numberBackgroundColor = const Color(0xff1A1D2E);
 Color readColor = const Color(0xffFF2566);
 
-TextStyle blackTextStyle = GoogleFonts.poppins(
+TextStyle blackTextStyle = GoogleFonts.lexendDeca(
   color: blackColor,
 );
 
-TextStyle whiteTextStyle = GoogleFonts.poppins(
+TextStyle whiteTextStyle = GoogleFonts.lexendDeca(
   color: whiteColor,
 );
 
-TextStyle greyTextStyle = GoogleFonts.poppins(
+TextStyle greyTextStyle = GoogleFonts.lexendDeca(
   color: greyColor,
 );
 
-TextStyle greyBlackTextStyle = GoogleFonts.poppins(
+TextStyle greyBlackTextStyle = GoogleFonts.lexendDeca(
   color: greyBlackColor,
 );
 
-TextStyle blueTextStyle = GoogleFonts.poppins(
+TextStyle blueTextStyle = GoogleFonts.lexendDeca(
   color: blueColor,
 );
 
-TextStyle greenTextStyle = GoogleFonts.poppins(
+TextStyle greenTextStyle = GoogleFonts.lexendDeca(
   color: greenColor,
 );
 

@@ -24,6 +24,26 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
   final TextEditingController jumlahControl = TextEditingController();
   final TextEditingController catatanControl = TextEditingController();
 
+  static const List<String> _incomeCategories = [
+    'Gajian',
+    'Bonus',
+    'Investasi',
+    'Penjualan',
+    'Hadiah',
+    'Lain-Lain',
+  ];
+
+  static const List<String> _expenseCategories = [
+    'Makan & Minum',
+    'Transportasi',
+    'Belanja',
+    'Tagihan',
+    'Hiburan',
+    'Kesehatan',
+    'Pendidikan',
+    'Lain-Lain',
+  ];
+
   bool isLoading = false;
   String successMessage = '';
 
@@ -32,6 +52,13 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
   TipeTransaksi? group = TipeTransaksi.pemasukan;
 
   String kategori = '';
+
+  List<String> _categoryOptionsForType(TipeTransaksi? type) {
+    if (type == TipeTransaksi.pengeluaran) {
+      return _expenseCategories;
+    }
+    return _incomeCategories;
+  }
 
   @override
   void dispose() {
@@ -115,6 +142,45 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      helpText: 'Pilih tanggal transaksi',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: birulangit,
+              onPrimary: whiteColor,
+              onSurface: blackColor,
+              surface: whiteColor,
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: whiteColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              headerBackgroundColor: birulangit,
+              headerForegroundColor: whiteColor,
+              weekdayStyle: greyBlackTextStyle.copyWith(
+                fontWeight: semiBold,
+              ),
+              dayStyle: blackTextStyle.copyWith(
+                fontWeight: medium,
+              ),
+              yearStyle: blackTextStyle.copyWith(
+                fontWeight: medium,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: birulangit,
+                textStyle: blackTextStyle.copyWith(
+                  fontWeight: semiBold,
+                ),
+              ),
+            ),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
 
     if (pickerDate != null) {
@@ -208,6 +274,11 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
         onTap: () {
           setState(() {
             group = type;
+            final List<String> selectedCategories =
+                _categoryOptionsForType(type);
+            if (!selectedCategories.contains(kategori)) {
+              kategori = '';
+            }
           });
         },
         child: AnimatedContainer(
@@ -587,237 +658,261 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
     );
   }
 
-  Widget _buildTopActionIcon({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: whiteColor.withValues(alpha: 0.2),
+  Widget _buildFormIntroSection() {
+    final bool isExpense = group == TipeTransaksi.pengeluaran;
+    final String activeTypeLabel = isExpense ? 'Pengeluaran' : 'Pemasukan';
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: blueLightColor.withValues(alpha: 0.55),
+        border: Border.all(
+          color: blueColor.withValues(alpha: 0.2),
         ),
-        child: Icon(
-          icon,
-          color: whiteColor,
-          size: 18,
-        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: whiteColor,
+            ),
+            child: Icon(
+              Icons.edit_note_rounded,
+              color: birulangit,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Detail Catatan Keuangan',
+                  style: blackTextStyle.copyWith(
+                    fontSize: 14,
+                    fontWeight: semiBold,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  'Mode aktif: $activeTypeLabel',
+                  style: blueTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: semiBold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: _resetForm,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: whiteColor,
+              ),
+              child: Icon(
+                Icons.clear_rounded,
+                color: birulangit,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTopHeader() {
-    return Positioned(
-      top: 16,
-      left: 24,
-      right: 24,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: birulangit,
-          boxShadow: [
-            BoxShadow(
-              color: birulangit.withValues(alpha: 0.28),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
-            ),
-          ],
+  Widget _buildCategoryDropdown() {
+    final List<String> categoryOptions = _categoryOptionsForType(group);
+    final String categoryTypeLabel =
+        group == TipeTransaksi.pengeluaran ? 'pengeluaran' : 'pemasukan';
+
+    return DropdownButtonFormField<String>(
+      key: ValueKey('${group?.name}-${kategori.isEmpty ? 'empty' : kategori}'),
+      initialValue: kategori.isEmpty ? null : kategori,
+      borderRadius: BorderRadius.circular(14),
+      menuMaxHeight: 280,
+      isExpanded: true,
+      icon: Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: birulangit,
+      ),
+      dropdownColor: whiteColor,
+      style: blackTextStyle.copyWith(
+        fontWeight: medium,
+      ),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: blueLightColor.withValues(alpha: 0.35),
+        prefixIcon: Icon(
+          Icons.category_outlined,
+          color: greyBlackColor.withValues(alpha: 0.75),
+          size: 20,
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: whiteColor.withValues(alpha: 0.2),
-              ),
-              child: Icon(
-                Icons.note_add_outlined,
-                color: whiteColor,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Input Catatan Baru',
-                    style: whiteTextStyle.copyWith(
-                      fontWeight: semiBold,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Lengkapi detail transaksi harian kamu',
-                    style: whiteTextStyle.copyWith(
-                      fontSize: 12,
-                      color: whiteColor.withValues(alpha: 0.9),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            _buildTopActionIcon(
-              icon: Icons.clear_rounded,
-              onTap: _resetForm,
-            ),
-          ],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: blueColor.withValues(alpha: 0.2),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: blueColor.withValues(alpha: 0.2),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: birulangit,
+            width: 1.4,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
         ),
       ),
+      hint: Text(
+        'Pilih kategori $categoryTypeLabel',
+        style: greyTextStyle.copyWith(
+          fontWeight: medium,
+        ),
+      ),
+      items: categoryOptions
+          .map(
+            (value) => DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: blackTextStyle.copyWith(
+                  fontWeight: medium,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          kategori = value ?? '';
+        });
+      },
     );
   }
 
   Widget _buildFormState() {
+    final double keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+
     return Stack(
       children: [
         const _InputFormBackground(),
-        _buildTopHeader(),
-        Positioned.fill(
-          top: 130,
-          child: Container(
-            decoration: BoxDecoration(
-              color: whiteColor,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(34),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: blackColor.withValues(alpha: 0.06),
-                  blurRadius: 16,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
+        SafeArea(
+          child: AnimatedPadding(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            padding: EdgeInsets.only(bottom: keyboardInset),
             child: Form(
               key: formKey,
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 34),
-                children: [
-                  CustomFormField(
-                    title: 'Tanggal',
-                    hintText: 'Pilih tanggal transaksi',
-                    controller: tanggalControl,
-                    readOnly: true,
-                    onTap: _selectDate,
-                    prefixIcon: Icons.calendar_today_outlined,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Tipe Transaksi',
-                    style: blackTextStyle.copyWith(
-                      fontWeight: semiBold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      _buildTransactionTypeOption(
-                        'Pengeluaran',
-                        TipeTransaksi.pengeluaran,
-                        Icons.trending_down_rounded,
-                      ),
-                      const SizedBox(width: 10),
-                      _buildTransactionTypeOption(
-                        'Pemasukan',
-                        TipeTransaksi.pemasukan,
-                        Icons.trending_up_rounded,
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: whiteColor,
+                    borderRadius: BorderRadius.circular(28),
+                    boxShadow: [
+                      BoxShadow(
+                        color: blackColor.withValues(alpha: 0.06),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Kategori',
-                    style: blackTextStyle.copyWith(
-                      fontWeight: semiBold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  InputDecorator(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: blueLightColor.withValues(alpha: 0.35),
-                      prefixIcon: Icon(
-                        Icons.category_outlined,
-                        color: greyBlackColor.withValues(alpha: 0.75),
-                        size: 20,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(
-                          color: blueColor.withValues(alpha: 0.2),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFormIntroSection(),
+                        const SizedBox(height: 18),
+                        CustomFormField(
+                          title: 'Tanggal',
+                          hintText: 'Pilih tanggal transaksi',
+                          controller: tanggalControl,
+                          readOnly: true,
+                          onTap: _selectDate,
+                          prefixIcon: Icons.calendar_today_outlined,
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(
-                          color: blueColor.withValues(alpha: 0.2),
-                        ),
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        hint: Text(
-                          kategori.isEmpty ? 'Pilih Kategori' : kategori,
+                        const SizedBox(height: 16),
+                        Text(
+                          'Tipe Transaksi',
                           style: blackTextStyle.copyWith(
-                            fontWeight: medium,
+                            fontWeight: semiBold,
                           ),
                         ),
-                        isDense: true,
-                        isExpanded: true,
-                        items: [
-                          'Gajian',
-                          'Bonus',
-                          'Hiburan',
-                          'Tagihan',
-                          'Lain-Lain',
-                        ].map((value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: blackTextStyle.copyWith(
-                                fontWeight: medium,
-                              ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            _buildTransactionTypeOption(
+                              'Pengeluaran',
+                              TipeTransaksi.pengeluaran,
+                              Icons.trending_down_rounded,
                             ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            kategori = value.toString();
-                          });
-                        },
-                      ),
+                            const SizedBox(width: 10),
+                            _buildTransactionTypeOption(
+                              'Pemasukan',
+                              TipeTransaksi.pemasukan,
+                              Icons.trending_up_rounded,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Kategori',
+                          style: blackTextStyle.copyWith(
+                            fontWeight: semiBold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildCategoryDropdown(),
+                        const SizedBox(height: 16),
+                        CustomFormField(
+                          title: 'Jumlah',
+                          hintText: 'Masukkan nominal',
+                          controller: jumlahControl,
+                          inputType: TextInputType.number,
+                          prefixIcon: Icons.payments_outlined,
+                          scrollPadding: const EdgeInsets.only(bottom: 240),
+                        ),
+                        const SizedBox(height: 16),
+                        CustomFormField(
+                          title: 'Catatan',
+                          hintText: 'Tulis catatan singkat transaksi',
+                          controller: catatanControl,
+                          prefixIcon: Icons.notes_rounded,
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 30),
+                        CustomFillButton(
+                          title: 'Simpan Catatan',
+                          onPressed: _onSubmitPressed,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  CustomFormField(
-                    title: 'Jumlah',
-                    hintText: 'Masukkan nominal',
-                    controller: jumlahControl,
-                    inputType: TextInputType.number,
-                    prefixIcon: Icons.payments_outlined,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomFormField(
-                    title: 'Catatan',
-                    hintText: 'Tulis catatan singkat transaksi',
-                    controller: catatanControl,
-                    prefixIcon: Icons.notes_rounded,
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 30),
-                  CustomFillButton(
-                    title: 'Simpan Catatan',
-                    onPressed: _onSubmitPressed,
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -850,13 +945,11 @@ class _AddFinancialPageState extends State<AddFinancialPage> {
           ),
         ),
       ),
-      body: Center(
-        child: isLoading
-            ? _buildLoadingState()
-            : successMessage.isNotEmpty
-                ? _buildSuccessState()
-                : _buildFormState(),
-      ),
+      body: isLoading
+          ? _buildLoadingState()
+          : successMessage.isNotEmpty
+              ? _buildSuccessState()
+              : _buildFormState(),
     );
   }
 }

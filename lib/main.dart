@@ -8,6 +8,7 @@ import 'package:finalcial_records/ui/pages/sign_in_page.dart';
 import 'package:finalcial_records/ui/pages/sign_up_page.dart';
 import 'package:finalcial_records/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
@@ -27,6 +28,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: lightBackgroundColor,
+        textTheme: GoogleFonts.lexendDecaTextTheme(),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: _SmoothPageTransitionsBuilder(),
+            TargetPlatform.iOS: _SmoothPageTransitionsBuilder(),
+            TargetPlatform.linux: _SmoothPageTransitionsBuilder(),
+            TargetPlatform.macOS: _SmoothPageTransitionsBuilder(),
+            TargetPlatform.windows: _SmoothPageTransitionsBuilder(),
+            TargetPlatform.fuchsia: _SmoothPageTransitionsBuilder(),
+          },
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: lightBackgroundColor,
           elevation: 0,
@@ -48,6 +60,44 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfilePage(),
         '/avatar': (context) => const AvatarPage(),
       },
+    );
+  }
+}
+
+class _SmoothPageTransitionsBuilder extends PageTransitionsBuilder {
+  const _SmoothPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final Animation<double> fadeAnimation = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+
+    final Animation<Offset> slideAnimation = Tween<Offset>(
+      begin: const Offset(0.045, 0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      ),
+    );
+
+    return FadeTransition(
+      opacity: fadeAnimation,
+      child: SlideTransition(
+        position: slideAnimation,
+        child: child,
+      ),
     );
   }
 }
