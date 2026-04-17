@@ -149,7 +149,7 @@ class _SignInPageState extends State<SignInPage>
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'Sign In',
+                          'Masuk Akun',
                           style: blackTextStyle.copyWith(
                             fontSize: 32,
                             fontWeight: extraBold,

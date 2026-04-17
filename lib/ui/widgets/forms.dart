@@ -1,5 +1,6 @@
 ﻿import 'package:finalcial_records/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomFormField extends StatelessWidget {
   const CustomFormField({
@@ -16,6 +17,7 @@ class CustomFormField extends StatelessWidget {
     this.suffixIcon,
     this.onChanged,
     this.maxLines = 1,
+    this.inputFormatters,
   });
 
   final String title;
@@ -30,6 +32,7 @@ class CustomFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
   final int maxLines;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +56,7 @@ class CustomFormField extends StatelessWidget {
           readOnly: readOnly,
           onTap: onTap,
           onChanged: onChanged,
+          inputFormatters: inputFormatters,
           maxLines: obscureText ? 1 : maxLines,
           keyboardType: inputType,
           decoration: InputDecoration(

@@ -1,10 +1,13 @@
-﻿import 'package:finalcial_records/models/catatan.dart';
+import 'package:finalcial_records/models/catatan.dart';
+import 'package:finalcial_records/models/scheduled_bill.dart';
 import 'package:finalcial_records/shared/shared_methods.dart';
 import 'package:finalcial_records/shared/shared_preferences.dart';
 import 'package:finalcial_records/shared/snackbar.dart';
 import 'package:finalcial_records/shared/theme.dart';
+import 'package:finalcial_records/ui/pages/scheduled_bill_detail_page.dart';
 import 'package:finalcial_records/ui/widgets/history_transaction_item.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum _HistoryFilter {
@@ -22,6 +25,30 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   _HistoryFilter _selectedHistoryFilter = _HistoryFilter.all;
+  bool _isScheduledBillsLoading = true;
+  List<ScheduledBill> _savedScheduledBills = [];
+
+  static const List<_ScheduledBillType> _scheduledBillTypes = [
+    _ScheduledBillType(name: 'Listrik', icon: Icons.bolt_rounded),
+    _ScheduledBillType(name: 'BPJS', icon: Icons.health_and_safety_rounded),
+    _ScheduledBillType(name: 'Kartu Kredit', icon: Icons.credit_card_rounded),
+    _ScheduledBillType(name: 'Cicilan', icon: Icons.payments_rounded),
+    _ScheduledBillType(name: 'PDAM', icon: Icons.water_drop_rounded),
+    _ScheduledBillType(name: 'Pendidikan', icon: Icons.school_rounded),
+    _ScheduledBillType(
+      name: 'TV Kabel & Internet',
+      icon: Icons.router_rounded,
+    ),
+    _ScheduledBillType(name: 'Asuransi', icon: Icons.shield_rounded),
+    _ScheduledBillType(name: 'Pascabayar', icon: Icons.smartphone_rounded),
+    _ScheduledBillType(name: 'Lainnya', icon: Icons.more_horiz_rounded),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadScheduledBills();
+  }
 
   Future<List<Catatan>> readCatatan() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,6 +73,77 @@ class _MenuPageState extends State<MenuPage> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Future<void> _loadScheduledBills() async {
+    final List<ScheduledBill> storedBills =
+        await SharedPrefUtils.readScheduledBills();
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _savedScheduledBills = storedBills;
+      _isScheduledBillsLoading = false;
+    });
+  }
+
+  ScheduledBill? _findScheduledBillByType(String billType) {
+    for (final ScheduledBill bill in _savedScheduledBills) {
+      if (bill.type.toLowerCase() == billType.toLowerCase()) {
+        return bill;
+      }
+    }
+    return null;
+  }
+
+  String _formatDueDate(String dueDateIso) {
+    final DateTime? dueDate = DateTime.tryParse(dueDateIso);
+    if (dueDate == null) {
+      return '-';
+    }
+    return DateFormat('dd MMM yyyy').format(dueDate);
+  }
+
+  IconData _resolveScheduledBillIcon(String billType) {
+    for (final _ScheduledBillType item in _scheduledBillTypes) {
+      if (item.name.toLowerCase() == billType.toLowerCase()) {
+        return item.icon;
+      }
+    }
+    return Icons.receipt_long_rounded;
+  }
+
+  Future<void> _openScheduledBillDetail({
+    required String billType,
+    ScheduledBill? initialBill,
+  }) async {
+    final bool? hasSaved = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScheduledBillDetailPage(
+          billType: billType,
+          initialBill: initialBill,
+        ),
+      ),
+    );
+
+    if (hasSaved != true) {
+      return;
+    }
+
+    await _loadScheduledBills();
+
+    if (!mounted) {
+      return;
+    }
+
+    CustomSnackBar.showToast(
+      context,
+      'Tagihan $billType berhasil diperbarui.',
+      type: ToastType.success,
+    );
   }
 
   Future<void> _onDeletePressed(Catatan item) async {
@@ -191,6 +289,43 @@ class _MenuPageState extends State<MenuPage> {
     }
   }
 
+  Future<void> _onScheduledBillTypeTap(_ScheduledBillType billType) async {
+    await _openScheduledBillDetail(
+      billType: billType.name,
+      initialBill: _findScheduledBillByType(billType.name),
+    );
+  }
+
+  Future<void> _onScheduledBillReminderChanged(
+    ScheduledBill bill,
+    bool reminderEnabled,
+  ) async {
+    await SharedPrefUtils.updateScheduledBillReminder(
+      bill.type,
+      reminderEnabled,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _savedScheduledBills = _savedScheduledBills
+          .map(
+            (item) => item.type.toLowerCase() == bill.type.toLowerCase()
+                ? item.copyWith(reminderEnabled: reminderEnabled)
+                : item,
+          )
+          .toList();
+    });
+
+    CustomSnackBar.showToast(
+      context,
+      'Pengingat ${bill.type} ${reminderEnabled ? 'aktif' : 'nonaktif'}.',
+      type: ToastType.info,
+    );
+  }
+
   Widget _buildHistoryFilterChip({
     required _HistoryFilter filter,
     required String label,
@@ -237,6 +372,7 @@ class _MenuPageState extends State<MenuPage> {
               children: [
                 buildProfile(context),
                 buildWallet(context),
+                buildScheduledBills(context),
                 buildHistory(context),
               ],
             ),
@@ -340,6 +476,29 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ),
           const SizedBox(width: 12),
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, '/report');
+            },
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: blueLightColor,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: birulangit.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Icon(
+                Icons.pie_chart_rounded,
+                color: birulangit,
+                size: 22,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
               Navigator.pushNamed(context, '/profile');
@@ -525,6 +684,285 @@ class _MenuPageState extends State<MenuPage> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildScheduledBillTypeItem(_ScheduledBillType billType) {
+    final bool isConfigured = _findScheduledBillByType(billType.name) != null;
+
+    return InkWell(
+      onTap: () {
+        _onScheduledBillTypeTap(billType);
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: blueLightColor.withValues(alpha: 0.65),
+          border: Border.all(
+            color: birulangit.withValues(alpha: 0.14),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: whiteColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                billType.icon,
+                color: birulangit,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                billType.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: greyBlackTextStyle.copyWith(
+                  fontSize: 12,
+                  fontWeight: semiBold,
+                  height: 1.25,
+                ),
+              ),
+            ),
+            if (isConfigured)
+              Icon(
+                Icons.check_circle_rounded,
+                color: greenColor,
+                size: 18,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavedScheduledBillItem(ScheduledBill bill) {
+    return InkWell(
+      onTap: () {
+        _openScheduledBillDetail(
+          billType: bill.type,
+          initialBill: bill,
+        );
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: blueLightColor.withValues(alpha: 0.52),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: whiteColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _resolveScheduledBillIcon(bill.type),
+                color: birulangit,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    bill.type,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 13,
+                      fontWeight: semiBold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${formatCurrency(bill.amount)} • Jatuh tempo ${_formatDueDate(bill.dueDateIso)}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: greyBlackTextStyle.copyWith(
+                      fontSize: 12,
+                      fontWeight: medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Switch.adaptive(
+              value: bill.reminderEnabled,
+              activeThumbColor: birulangit,
+              activeTrackColor: birulangit.withValues(alpha: 0.38),
+              onChanged: (bool value) {
+                _onScheduledBillReminderChanged(bill, value);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavedScheduledBillList() {
+    if (_isScheduledBillsLoading) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        child: Center(
+          child: CircularProgressIndicator(
+            color: birulangit,
+          ),
+        ),
+      );
+    }
+
+    if (_savedScheduledBills.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: blueLightColor.withValues(alpha: 0.45),
+        ),
+        child: Text(
+          'Belum ada tagihan tersimpan. Pilih jenis tagihan di atas untuk mulai menambahkan.',
+          style: greyBlackTextStyle.copyWith(
+            fontSize: 12,
+            fontWeight: medium,
+            height: 1.4,
+          ),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _savedScheduledBills.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final ScheduledBill bill = _savedScheduledBills[index];
+        return _buildSavedScheduledBillItem(bill);
+      },
+    );
+  }
+
+  Widget buildScheduledBills(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: whiteColor,
+        boxShadow: [
+          BoxShadow(
+            color: blackColor.withValues(alpha: 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Tagihan Terjadwal',
+                style: blackTextStyle.copyWith(
+                  fontSize: 18,
+                  fontWeight: semiBold,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: blueLightColor,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+                child: Text(
+                  '${_scheduledBillTypes.length} Jenis',
+                  style: blueTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: semiBold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Pilih jenis tagihan untuk mengatur pengingat pembayaran rutin.',
+            style: greyTextStyle.copyWith(
+              fontSize: 12,
+              fontWeight: medium,
+            ),
+          ),
+          const SizedBox(height: 14),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const double spacing = 10;
+              final double itemWidth = (constraints.maxWidth - spacing) / 2;
+
+              return Wrap(
+                spacing: spacing,
+                runSpacing: spacing,
+                children: _scheduledBillTypes
+                    .map(
+                      (billType) => SizedBox(
+                        width: itemWidth,
+                        child: _buildScheduledBillTypeItem(billType),
+                      ),
+                    )
+                    .toList(),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Daftar Tagihan Tersimpan',
+            style: blackTextStyle.copyWith(
+              fontSize: 14,
+              fontWeight: semiBold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Tap item untuk ubah nominal, jatuh tempo, dan pengingat.',
+            style: greyTextStyle.copyWith(
+              fontSize: 12,
+              fontWeight: medium,
+            ),
+          ),
+          const SizedBox(height: 10),
+          _buildSavedScheduledBillList(),
+        ],
       ),
     );
   }
@@ -716,6 +1154,16 @@ class _MenuPageState extends State<MenuPage> {
   }
 }
 
+class _ScheduledBillType {
+  const _ScheduledBillType({
+    required this.name,
+    required this.icon,
+  });
+
+  final String name;
+  final IconData icon;
+}
+
 class _HomeBackground extends StatelessWidget {
   const _HomeBackground();
 
@@ -774,4 +1222,3 @@ class _HomeBackground extends StatelessWidget {
     );
   }
 }
-
